@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║  FREECOLORS — PÁGINA DE CONTACTO v1.0                        ║
+╠══════════════════════════════════════════════════════════════╣
+║  • Identidad visual unificada con index y catálogo.          ║
+║  • Información de empresa familiar fundada en 2003.          ║
+║  • Mapa interactivo y datos de contacto de línea.            ║
+╚══════════════════════════════════════════════════════════════╝
+-->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#07091d">
+  <title>Contacto – Freecolors Pinturerías</title>
+  <meta name="description" content="Contactá a Freecolors Pinturerías. Av. Rivadavia 22606, Buenos Aires. WhatsApp, teléfono y mapa.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --azul-oscuro:  #07091d;
+      --azul-medio:   #0d1a52;
+      --azul-fuerte:  #0044ff;
+      --violeta:      #9900ee;
+      --degradado:    linear-gradient(135deg, #0044ff 0%, #9900ee 100%);
+      --azul-claro:   #4da3ff;
+      --azul-suave:   #f0f4ff;
+      --blanco:       #f0f4ff;
+      --gris:         #8fa8c8;
+      --amarillo:     #ffcd3c;
+      --rojo-error:   #e53e3e;
+      --verde-wa:     #25d366;
+      --espacio-abajo:  env(safe-area-inset-bottom, 0px);
+      --espacio-arriba: env(safe-area-inset-top,    0px);
+      --transicion: 0.2s ease;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: #edf2f7; color: var(--azul-oscuro); overflow-x: hidden; }
+
+    /* Nav - Sincronizado con index y catalogo */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(7, 9, 29, 0.97); backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4%; height: 60px; border-bottom: 1px solid rgba(77, 163, 255, 0.15);
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.7rem; color: var(--blanco);
+      letter-spacing: 2px; text-decoration: none;
+      display: flex; align-items: center;
+    }
+    .logo img { height: 40px; width: auto; object-fit: contain; }
+    .logo span { color: var(--azul-claro); margin-left: 8px; display: none; }
+
+    .nav-links { list-style: none; display: none; }
+    .nav-links li { margin: 0 1rem; }
+    .nav-links a { color: var(--gris); text-decoration: none; font-size: 0.85rem; font-weight: 500; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--blanco); }
+    .nav-links a.activo { color: var(--blanco); font-weight: 700; }
+
+    .btn-menu-mobile {
+      background: none; border: none; cursor: pointer;
+      color: var(--blanco); font-size: 1.5rem;
+      min-width: 48px; min-height: 48px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 8px;
+    }
+
+    /* Menú mobile */
+    .menu-mobile {
+      position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
+      background: rgba(7,9,29,0.99); z-index: 99;
+      display: flex; flex-direction: column; padding: 1rem 5%;
+      transform: translateX(-100%); transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .menu-mobile a {
+      color: var(--gris); text-decoration: none; font-size: 1.1rem; font-weight: 500;
+      padding: 1rem 0; min-height: 48px; display: flex; align-items: center;
+      border-bottom: 1px solid rgba(77,163,255,0.1);
+    }
+    .menu-mobile a:last-child { border-bottom: none; }
+    .menu-mobile a:active { color: var(--blanco); }
+    .menu-mobile.abierto { transform: translateX(0); }
+
+    /* Header */
+    .header-contacto {
+      min-height: 50vh;
+      background: linear-gradient(155deg, #07091d 0%, #0c0535 45%, #130050 65%, #07091d 100%);
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 120px 5% 4rem; text-align: center; color: var(--blanco); position: relative; overflow: hidden;
+    }
+    .header-contacto::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+              linear-gradient(-45deg, transparent 0%, rgba(0,68,255,0.07) 25%, rgba(153,0,238,0.10) 45%, rgba(0,68,255,0.05) 60%, transparent 75%),
+              radial-gradient(ellipse at 15% 25%, rgba(0,68,255,0.22) 0%, transparent 55%),
+              radial-gradient(ellipse at 85% 75%, rgba(153,0,238,0.22) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    /* Blobs animados */
+    .blobs { position: absolute; inset: 0; overflow: hidden; }
+    .blob  { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.35; animation: flotar 8s ease-in-out infinite; }
+    .blob-1 { width: 360px; height: 360px; background: var(--azul-fuerte); top: -80px;  right: -100px; }
+    .blob-2 { width: 240px; height: 240px; background: var(--violeta);     bottom: 20%; left:  -70px;  animation-delay: 3s; }
+    .blob-3 { width: 180px; height: 180px; background: var(--degradado);   bottom: -40px; right: 10%; animation-delay: 5s; }
+
+    @keyframes flotar { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.05); } }
+    .header-contacto h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 8vw, 4.5rem); letter-spacing: 2px; margin-bottom: 1rem; position: relative; z-index: 1; line-height: 1; }
+    .header-contacto h1 em { background: var(--degradado); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-style: normal; }
+    .header-contacto p { color: var(--gris); max-width: 600px; margin: 0 auto; line-height: 1.6; position: relative; z-index: 1; font-size: 0.95rem; }
+
+    /* Contenido */
+    .seccion { padding: 4rem 5%; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+    .grid-contacto { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+
+    .info-card { background: #fff; border-radius: 20px; padding: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(30,111,217,0.08); }
+    .info-card h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: 1.5rem; color: var(--azul-fuerte); letter-spacing: 1px; }
+    .info-card p { line-height: 1.8; color: #4a6080; margin-bottom: 1.5rem; font-size: 1.05rem; }
+
+    .dato-contacto { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; }
+    .dato-icono { font-size: 1.5rem; width: 40px; height: 40px; background: var(--azul-suave); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .dato-texto h4 { font-size: 0.75rem; text-transform: uppercase; color: var(--gris); letter-spacing: 1px; margin-bottom: 0.2rem; }
+    .dato-texto p { margin-bottom: 0; font-weight: 600; color: var(--azul-oscuro); }
+    .dato-texto a { color: var(--azul-fuerte); text-decoration: none; font-weight: 600; }
+
+    /* Mapa */
+    .mapa-container { border-radius: 20px; overflow: hidden; height: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(30,111,217,0.1); }
+    iframe { width: 100%; height: 100%; border: none; }
+
+    /* Footer */
+    footer {
+      background: var(--azul-oscuro); padding: 3rem 4% calc(2rem + var(--espacio-abajo)); color: var(--gris); text-align: center; border-top: 1px solid rgba(77, 163, 255, 0.12);
+      background-image: radial-gradient(ellipse at 0% 0%, rgba(0, 68, 255, 0.06) 0%, transparent 60%), radial-gradient(ellipse at 100% 100%, rgba(153, 0, 238, 0.06) 0%, transparent 60%);
+    }
+
+    .footer-desc { color: var(--gris); font-size: 0.82rem; line-height: 1.7; margin-bottom: 1.5rem; }
+    .footer-copy { border-top: 1px solid rgba(77, 163, 255, 0.1); padding-top: 1.25rem; color: var(--gris); font-size: 0.75rem; }
+
+    /* Fondo de marca sutil */
+    .brand-background img { width: 100%; height: 100%; object-fit: contain; filter: grayscale(1); }
+
+    @media (min-width: 768px) {
+      nav { height: 64px; padding: 0 5%; }
+      .logo-imagen { height: 46px; }
+      .nav-links { display: flex; gap: 1.5rem; }
+      .nav-links a { color: var(--gris); text-decoration: none; font-size: 0.85rem; font-weight: 500; text-transform: uppercase; transition: color 0.2s; }
+      .nav-links a:hover { color: var(--blanco); }
+      .nav-links a.activo { color: var(--blanco); font-weight: 700; }
+      .btn-menu-mobile { display: none; }
+      .grid-contacto { grid-template-columns: 1fr 1.2fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <nav>
+    <a href="index.html" class="logo logo-img">
+      <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIbGNtcwIQAABtbnRyUkdCIFhZWiAH4gADABQACQAOAB1hY3NwTVNGVAAAAABzYXdzY3RybAAAAAAAAAAAAAAAAAAA9tYAAQAAAADTLWhhbmSdkQA9QICwPUB0LIGepSKOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAABxjcHJ0AAABDAAAAAx3dHB0AAABGAAAABRyWFlaAAABLAAAABRnWFlaAAABQAAAABRiWFlaAAABVAAAABRyVFJDAAABaAAAAGBnVFJDAAABaAAAAGBiVFJDAAABaAAAAGBkZXNjAAAAAAAAAAV1UkdCAAAAAAAAAAAAAAAAdGV4dAAAAABDQzAAWFlaIAAAAAAAAPNUAAEAAAABFslYWVogAAAAAAAAb6AAADjyAAADj1hZWiAAAAAAAABilgAAt4kAABjaWFlaIAAAAAAAACSgAAAPhQAAtsRjdXJ2AAAAAAAAACoAAAB8APgBnAJ1A4MEyQZOCBIKGAxiDvQRzxT2GGocLiBDJKwpai5+M+s5sz/WRldNNlR2XBdkHWyGdVZ+jYgskjacq6eMstu+mcrH12Xkd/H5////2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAQ4BDgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5Hooor7o4EFFFOoGNpDS0VmA2lFGKSiwDqbSnrSVNgQUUYopDCjpR/DQaTAduIp4IPSoqAfStqVZ09Ogmiem0gPalr0YNTWhIUUe1FPlASk5pcUVPKAUUUmKzcAFpq0c0mDWfIUGKSlxRilYYCn0welP6cUxoKQHBpfpRTWgx2aSmjIpwOa3jJMAWnU2nZqxoQ0mKU0c0DQlFLjFJSGO+lKtJQtBQtH8PNGRRQMKKKKAFFJSig0FISlXpSGgCgpDqTtS/w8UYqWMKTtS0VI0FNFFFIaFFLSClxQUhMUq0UoqCkJSilpO9ACfxUUY5pcVIBmgGkxRQWPHNGKRaXijc0QUUe1Jis2hhQKKBUgLSikooGh1Khz1pvSgUFIkp1Rg05aEaJjqBRQKpFoWiiimUFPRsdKSigaZOjA9KdVbkHipUYHg00zeEySnU2nLWhsKKDS0UFDaU" alt="Freecolors Logo" class="logo-imagen">
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="catalogo.html">Catálogo</a></li>
+      <li><a href="chatbot.html">Logo</a></li>
+      <li><a href="contacto.html" class="activo">Contacto</a></li>
+    </ul>
+    <div class="nav-acciones">
+      <button class="btn-menu-mobile" onclick="toggleMenu()">☰</button>
+    </div>
+  </nav>
+
+  <div class="menu-mobile" id="menuMobile">
+    <a href="index.html" onclick="toggleMenu()">🏠 Inicio</a>
+    <a href="catalogo.html" onclick="toggleMenu()">📖 Catálogo</a>
+    <a href="chatbot.html" onclick="toggleMenu()">💬 Logo</a>
+    <a href="contacto.html" onclick="toggleMenu()">📞 Contacto</a>
+  </div>
+
+  <header class="header-contacto">
+    <!-- Efectos visuales de fondo (igual que en index) -->
+    <div class="blobs">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+    </div>
+
+    <h1>CONTÁCTATE CON <em>NOSOTROS</em></h1>
+    <p>Estamos aquí para asesorarte. Vení a conocernos o escribinos por cualquiera de nuestros canales.</p>
+  </header>
+
+  <section class="seccion">
+    <div class="grid-contacto">
+
+      <div class="info-card">
+        <h2>Nuestra Historia</h2>
+        <p>Somos una empresa familiar dedicada a la venta de pinturas y accesorios creada en 2003. Nuestro mayor anhelo es poder complacer a nuestros clientes ofreciéndoles buen trato, calidad y el mejor precio en todo tipo de pinturas ya sea hogar y obra, revestimientos y automotor.</p>
+        <p>Los invitamos a visitarnos cuando quieran.</p>
+
+        <div style="margin-top: 2rem;">
+          <div class="dato-contacto">
+            <div class="dato-icono">📍</div>
+            <div class="dato-texto">
+              <h4>Dirección</h4>
+              <p>Av. Rivadavia 22606, B1714GUJ Buenos Aires, Provincia de Buenos Aires</p>
+            </div>
+          </div>
+
+          <div class="dato-contacto">
+            <div class="dato-icono">📞</div>
+            <div class="dato-texto">
+              <h4>Teléfono de Línea</h4>
+              <p><a href="tel:01140409302">011 4040-9302</a></p>
+            </div>
+          </div>
+
+          <div class="dato-contacto">
+            <div class="dato-icono">📱</div>
+            <div class="dato-texto">
+              <h4>WhatsApp</h4>
+              <p><a href="https://wa.me/5491131332405" target="_blank">54 9 11 3133-2405</a></p>
+            </div>
+          </div>
+
+          <div class="dato-contacto">
+            <div class="dato-icono">🕐</div>
+            <div class="dato-texto">
+              <h4>Horarios</h4>
+              <p>Lun-Vie 8:30-13:00 y 15:00-18:30 | Sáb 8:30-13:00</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mapa-container">
+        <!-- Mapa de Rivadavia 22606 -->
+        <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3281.442841666879!2d-58.65364122343516!3d-34.66875357293043!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcbe4357c9f871%3A0xc0787e7939366e8e!2sAv.%20Rivadavia%2022606%2C%20B1714%20Ituzaing%C3%B3%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1710891000000!5m2!1ses-419!2sar"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <a href="index.html" class="logo logo-img">
+      <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIbGNtcwIQAABtbnRyUkdCIFhZWiAH4gADABQACQAOAB1hY3NwTVNGVAAAAABzYXdzY3RybAAAAAAAAAAAAAAAAAAA9tYAAQAAAADTLWhhbmSdkQA9QICwPUB0LIGepSKOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAABxjcHJ0AAABDAAAAAx3dHB0AAABGAAAABRyWFlaAAABLAAAABRnWFlaAAABQAAAABRiWFlaAAABVAAAABRyVFJDAAABaAAAAGBnVFJDAAABaAAAAGBiVFJDAAABaAAAAGBkZXNjAAAAAAAAAAV1UkdCAAAAAAAAAAAAAAAAdGV4dAAAAABDQzAAWFlaIAAAAAAAAPNUAAEAAAABFslYWVogAAAAAAAAb6AAADjyAAADj1hZWiAAAAAAAABilgAAt4kAABjaWFlaIAAAAAAAACSgAAAPhQAAtsRjdXJ2AAAAAAAAACoAAAB8APgBnAJ1A4MEyQZOCBIKGAxiDvQRzxT2GGocLiBDJKwpai5+M+s5sz/WRldNNlR2XBdkHWyGdVZ+jYgskjacq6eMstu+mcrH12Xkd/H5////2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAQ4BDgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5Hooor7o4EFFFOoGNpDS0VmA2lFGKSiwDqbSnrSVNgQUUYopDCjpR/DQaTAduIp4IPSoqAfStqVZ09Ogmiem0gPalr0YNTWhIUUe1FPlASk5pcUVPKAUUUmKzcAFpq0c0mDWfIUGKSlxRilYYCn0welP6cUxoKQHBpfpRTWgx2aSmjIpwOa3jJMAWnU2nZqxoQ0mKU0c0DQlFLjFJSGO+lKtJQtBQtH8PNGRRQMKKKKAFFJSig0FISlXpSGgCgpDqTtS/w8UYqWMKTtS0VI0FNFFFIaFFLSClxQUhMUq0UoqCkJSilpO9ACfxUUY5pcVIBmgGkxRQWPHNGKRaXijc0QUUe1Jis2hhQKKBUgLSikooGh1Khz1pvSgUFIkp1Rg05aEaJjqBRQKpFoWiiimUFPRsdKSigaZOjA9KdVbkHipUYHg00zeEySnU2nLWhsKKDS0UFDaU" alt="Freecolors Logo">
+    </a>
+    <p class="footer-desc">Calidad y confianza en cada gota desde 2003.</p>
+    <div class="footer-copy">© 2026 Freecolors Pinturerías · Buenos Aires, Argentina</div>
+  </footer>
+
+  <script>
+    'use strict';
+
+    function toggleMenu() {
+      document.getElementById('menuMobile').classList.toggle('abierto');
+    }
+  </script>
+</div>
+</body>
+</html>

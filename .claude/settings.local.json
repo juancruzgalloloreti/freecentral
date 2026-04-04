@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:www.sanyojafep.com)",
+      "Bash(python -c \":*)",
+      "Bash(start chrome:*)",
+      "Bash(del \"C:\\\\Users\\\\ten\\\\Desktop\\\\freecolors page\\\\package.json\")"
+    ]
+  }
+}

@@ -115,6 +115,7 @@
       padding: 1.2rem 1.5rem; background: rgba(7, 9, 29, 0.5);
       border-bottom: 1px solid rgba(77, 163, 255, 0.1);
       display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
     }
     .bot-info { display: flex; align-items: center; gap: 12px; }
     .bot-avatar {
@@ -127,6 +128,15 @@
     .status-online { color: var(--verde-wa); font-size: 0.75rem; display: flex; align-items: center; gap: 4px; }
     .status-online::before { content: ''; width: 6px; height: 6px; background: currentColor; border-radius: 50%; }
 
+    /* Botón inicio en header */
+    .btn-inicio-header {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(77,163,255,0.2);
+      border-radius: 10px; padding: 6px 14px; color: var(--gris); font-size: 0.8rem;
+      cursor: pointer; font-family: inherit; transition: all 0.2s; display: none;
+    }
+    .btn-inicio-header:hover { background: rgba(77,163,255,0.15); color: white; }
+    .btn-inicio-header.visible { display: block; }
+
     .messages {
       flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;
       scrollbar-width: thin; scrollbar-color: var(--azul-claro) transparent;
@@ -135,59 +145,81 @@
     .messages::-webkit-scrollbar-thumb { background: var(--azul-claro); border-radius: 10px; }
 
     /* Welcome & Quick Actions */
-    .welcome { text-align: center; color: var(--blanco); padding: 2rem 1rem; animation: fadeUp 0.5s ease; }
+    .welcome { text-align: center; color: var(--blanco); padding: 1.5rem 0.5rem; animation: fadeUp 0.5s ease; }
     .welcome h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; margin-bottom: 0.5rem; letter-spacing: 1px; }
-    .welcome p { color: var(--gris); font-size: 0.9rem; }
+    .welcome p { color: var(--gris); font-size: 0.9rem; margin-bottom: 1.5rem; }
 
-    .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 1.5rem; }
+    /* Grid de consultas táctiles */
+    .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .quick-btn {
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(77,163,255,0.2);
-      border-radius: 12px; padding: 1rem; color: white; text-align: left; cursor: pointer;
-      transition: all 0.2s; font-family: inherit;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(77,163,255,0.25);
+      border-radius: 16px; padding: 1.1rem 0.8rem; color: white; text-align: left; cursor: pointer;
+      transition: all 0.18s; font-family: inherit; min-height: 72px;
+      display: flex; flex-direction: column; gap: 4px;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
-    .quick-btn:hover { background: rgba(77,163,255,0.15); border-color: var(--azul-claro); transform: translateY(-2px); }
-    .quick-btn strong { display: block; font-size: 0.85rem; margin-bottom: 2px; color: var(--azul-claro); }
+    .quick-btn:active { transform: scale(0.96); background: rgba(77,163,255,0.2); border-color: var(--azul-claro); }
+    .quick-btn strong { display: block; font-size: 0.9rem; color: var(--azul-claro); }
     .quick-btn span { font-size: 0.75rem; color: var(--gris); }
 
     /* Bubbles */
-    .msg { display: flex; max-width: 85%; animation: fadeUp 0.3s ease; }
+    .msg { display: flex; max-width: 92%; animation: fadeUp 0.3s ease; }
     .msg-bot { align-self: flex-start; }
     .msg-user { align-self: flex-end; }
 
     .bubble {
-      padding: 0.8rem 1.1rem; border-radius: 18px; font-size: 0.92rem; line-height: 1.5;
+      padding: 0.85rem 1.1rem; border-radius: 18px; font-size: 0.92rem; line-height: 1.55;
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
     .bubble-bot {
-      background: rgba(13, 26, 82, 0.8); color: var(--blanco);
+      background: rgba(13, 26, 82, 0.85); color: var(--blanco);
       border: 1px solid rgba(77, 163, 255, 0.2); border-bottom-left-radius: 4px;
     }
     .bubble-user {
       background: var(--degradado); color: white; border-bottom-right-radius: 4px;
+      font-size: 0.88rem;
     }
 
-    /* Input Area */
-    .chat-input-area {
-      padding: 1.2rem; background: rgba(7, 9, 29, 0.8);
-      border-top: 1px solid rgba(77, 163, 255, 0.1);
-    }
-    .input-wrapper {
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(77, 163, 255, 0.2);
-      border-radius: 16px; padding: 8px 12px; display: flex; align-items: flex-end; gap: 8px;
-    }
-    textarea {
-      flex: 1; background: none; border: none; outline: none; color: white;
-      font-family: inherit; font-size: 0.95rem; padding: 8px 0; resize: none; max-height: 120px;
-    }
-    textarea::placeholder { color: var(--gris); }
+    .bubble-bot b { color: var(--amarillo); }
 
-    .action-btn {
-      width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+    /* Cards de marcas */
+    .marcas-grid {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
     }
-    .send-btn { background: var(--degradado); color: white; }
+    .marca-pill {
+      background: rgba(77,163,255,0.12); border: 1px solid rgba(77,163,255,0.3);
+      border-radius: 20px; padding: 6px 14px; font-size: 0.82rem; color: var(--blanco);
+      white-space: nowrap; cursor: pointer; transition: all 0.18s;
+      user-select: none; -webkit-tap-highlight-color: transparent;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+    }
+    .marca-pill:active { background: rgba(77,163,255,0.3); transform: scale(0.96); }
+    .marca-pill.propia {
+      background: rgba(255,205,60,0.15); border-color: var(--amarillo); color: var(--amarillo);
+    }
+    .marca-pill .mp-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--azul-claro); flex-shrink: 0;
+    }
+    .marca-pill.propia .mp-dot { background: var(--amarillo); }
+    .marcas-ver-catalogo {
+      margin-top: 10px; display: block; color: var(--amarillo); font-size: 0.82rem; text-decoration: none;
+    }
 
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* Separador con menú looping */
+    .loop-menu-wrap {
+      animation: fadeUp 0.35s ease;
+    }
+    .loop-sep {
+      text-align: center; color: var(--gris); font-size: 0.78rem; margin: 4px 0 10px 0;
+      position: relative;
+    }
+    .loop-sep::before, .loop-sep::after {
+      content: ''; position: absolute; top: 50%; width: 28%; height: 1px;
+      background: rgba(77,163,255,0.2);
+    }
+    .loop-sep::before { left: 0; }
+    .loop-sep::after { right: 0; }
 
     /* Typing indicator */
     .typing-indicator { display: flex; gap: 4px; padding: 0.8rem 1.1rem; }
@@ -199,8 +231,7 @@
     .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
 
-    .bubble-bot b { color: var(--amarillo); }
-    .bubble-bot .product-added { margin-top: 0.5rem; padding: 0.5rem 0.7rem; background: rgba(37,211,102,0.15); border-radius: 8px; font-size: 0.85rem; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* Footer */
     footer {
@@ -254,47 +285,40 @@
               <span class="status-online">En línea</span>
             </div>
           </div>
+          <button class="btn-inicio-header" id="btnInicio" onclick="resetChat()">🏠 Inicio</button>
         </div>
 
         <div class="messages" id="messages">
+          <!-- Welcome pantalla inicial -->
           <div class="welcome" id="welcome">
             <h2>HOLA, SOY LOGO 🎨</h2>
-            <p>Tu asistente experto en Freecolors. ¿En qué puedo ayudarte hoy?</p>
-            <div class="quick-grid">
-              <button class="quick-btn" onclick="quickAsk('¿Hacen envíos?')">
+            <p>Tu asistente experto en Freecolors.<br>¿En qué puedo ayudarte hoy?</p>
+            <div class="quick-grid" id="welcomeGrid">
+              <button class="quick-btn" onclick="quickAsk('envios')">
                 <strong>🚚 Envíos</strong>
                 <span>Zonas y tiempos</span>
               </button>
-              <button class="quick-btn" onclick="quickAsk('¿Cuáles son los horarios?')">
+              <button class="quick-btn" onclick="quickAsk('horarios')">
                 <strong>🕐 Horarios</strong>
                 <span>Atención al público</span>
               </button>
-              <button class="quick-btn" onclick="quickAsk('¿Qué medios de pago aceptan?')">
+              <button class="quick-btn" onclick="quickAsk('pagos')">
                 <strong>💳 Pagos</strong>
                 <span>Medios de pago</span>
               </button>
-              <button class="quick-btn" onclick="quickAsk('¿Qué marcas tienen?')">
+              <button class="quick-btn" onclick="quickAsk('marcas')">
                 <strong>🏷️ Marcas</strong>
                 <span>Marcas disponibles</span>
               </button>
-              <button class="quick-btn" onclick="quickAsk('¿Dónde están ubicados?')">
+              <button class="quick-btn" onclick="quickAsk('ubicacion')">
                 <strong>📍 Ubicación</strong>
                 <span>Dirección y mapa</span>
               </button>
-              <button class="quick-btn" onclick="quickAsk('¿Cómo me comunico con ustedes?')">
+              <button class="quick-btn" onclick="quickAsk('contacto')">
                 <strong>📞 Contacto</strong>
                 <span>WhatsApp y teléfono</span>
               </button>
             </div>
-          </div>
-        </div>
-
-        <div class="chat-input-area">
-          <div class="input-wrapper">
-            <textarea id="userInput" placeholder="Escribí tu consulta..." rows="1"></textarea>
-            <button class="send-btn action-btn" id="sendBtn">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            </button>
           </div>
         </div>
       </div>
@@ -310,115 +334,144 @@
   'use strict';
 
   var messagesDiv = document.getElementById('messages');
-  var userInput = document.getElementById('userInput');
-  var sendBtn = document.getElementById('sendBtn');
+  var btnInicio = document.getElementById('btnInicio');
 
-  function normalizar(str) {
-    return String(str).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  }
-
-  function getResponse(text) {
-    var t = normalizar(text);
-
-    if (/^(hola|buenas|buen dia|buenos dias|buenas tardes|buenas noches|hey|que tal)/.test(t)) {
-      return '¡Hola! Soy Logo, tu asistente de Freecolors. 🎨 ¿En que puedo ayudarte?';
-    }
-
-    if (/^(chau|adios|gracias|nos vemos|hasta luego)/.test(t)) {
-      return '¡Gracias por visitarnos! Si necesitas algo mas, aca estoy. 👋';
-    }
-
-    if (t.includes('donde') || t.includes('ubicacion') || t.includes('direccion') || t.includes('mapa') || t.includes('sucursal')) {
-      return '📍 Estamos en <b>Av. Rivadavia 22606, Buenos Aires</b>. Podes ver el mapa en nuestra <a href="contacto.html" style="color:var(--amarillo)">pagina de contacto</a>.';
-    }
-
-    if (t.includes('horario') || t.includes('abren') || t.includes('cierran') || t.includes('atencion')) {
-      return '🕐 <b>Horarios de atencion:</b><br>• Lunes a Viernes: 8:30 a 13:00 y 15:00 a 18:30<br>• Sabados: 8:30 a 13:00<br>• Domingos y feriados: Cerrado';
-    }
-
-    if (t.includes('envio') || t.includes('domicilio') || t.includes('delivery') || t.includes('mandan')) {
-      return '🚚 <b>Envios:</b><br>• Hacemos envios a todo Buenos Aires y alrededores<br>• Compras mayores a <b>$50.000</b>: envio gratis!<br>• Entrega en 24-48hs habiles<br>• Tambien podes retirar en sucursal';
-    }
-
-    if (t.includes('pago') || t.includes('pagar') || t.includes('tarjeta') || t.includes('transferencia') || t.includes('efectivo') || t.includes('cuotas')) {
-      return '💳 <b>Medios de pago:</b><br>• Efectivo<br>• Tarjeta de debito y credito<br>• Mercado Pago';
-    }
-
-    if (/\bmarca/.test(t) || t.includes('sherwin') || t.includes('alba') || t.includes('colorin') || t.includes('tersuave')) {
-      return '🏷️ <b>Marcas disponibles:</b><br>• Freecolors (marca propia)<br>• Sherwin Williams<br>• Alba<br>• Colorin<br>• Tersuave<br>• Sanyo Jafep<br>• El Galgo<br>• Distincion<br>• Duracril<br>• Vitrolux';
-    }
-
-    if (t.includes('whatsapp') || t.includes('telefono') || t.includes('llamar') || t.includes('comunico') || t.includes('contacto')) {
-      return '📞 <b>Contactanos:</b><br>• <a href="https://wa.me/5491131332405" style="color:#25d366" target="_blank">WhatsApp: +54 9 11 3133-2405</a><br>• Tambien podes ver direccion y mapa en nuestra <a href="contacto.html" style="color:var(--amarillo)">pagina de contacto</a>';
-    }
-
-    if (t.includes('latex') || t.includes('latex interior') || t.includes('latex exterior')) {
-      return '🎨 <b>Latex:</b> pintura al agua, ideal para paredes interiores y exteriores. Lavable, buena cobertura y facil aplicacion con rodillo o pincel.<br>• <b>Interior:</b> acabado mate o satinado, lavable<br>• <b>Exterior:</b> resistente al sol y la lluvia<br><br>Consulta precios y marcas en el <a href="catalogo.html" style="color:var(--amarillo)">catalogo</a>.';
-    }
-
-    if (t.includes('esmalte')) {
-      return '🔧 <b>Esmalte:</b> pintura al solvente de acabado duro y brillante. Ideal para carpinterias (puertas, ventanas, rejas) y superficies de madera o metal.<br>• Alta resistencia a golpes y humedad<br>• Secado lento, mejor terminacion<br><br>Consulta precios y marcas en el <a href="catalogo.html" style="color:var(--amarillo)">catalogo</a>.';
-    }
-
-    if (t.includes('fijador') || t.includes('sellador')) {
-      return '🪣 <b>Fijador / Sellador:</b> imprimacion que se aplica antes de pintar. Necesario en paredes nuevas, muy absorbentes o con manchas.<br>• Mejora la adherencia de la pintura<br>• Reduce el consumo de pintura<br><br>Consulta precios en el <a href="catalogo.html" style="color:var(--amarillo)">catalogo</a>.';
-    }
-
-    if (t.includes('barniz')) {
-      return '🪵 <b>Barniz:</b> proteccion y terminacion para madera. Disponible en acabado mate, satinado y brillante.<br>• Realza la veta natural de la madera<br>• Protege contra humedad y desgaste<br>• Hay versiones para interior y exterior<br><br>Consulta precios en el <a href="catalogo.html" style="color:var(--amarillo)">catalogo</a>.';
-    }
-
-    if (t.includes('enduido')) {
-      return '🧱 <b>Enduido:</b> pasta para nivelar y rellenar imperfecciones en paredes antes de pintar.<br>• <b>Interior:</b> para paredes lisas perfectas<br>• <b>Exterior:</b> resistente a la intemperie<br>• Se lija una vez seco para mejor resultado<br><br>Consulta precios en el <a href="catalogo.html" style="color:var(--amarillo)">catalogo</a>.';
-    }
-
-    if (t.includes('diluyente') || t.includes('aguarras') || t.includes('solvente')) {
-      return '🧪 <b>Diluyente / Aguarras:</b> solvente para limpiar pinceles y herramientas usadas con esmalte, y para diluir pinturas al solvente si es necesario.<br>• Ideal para limpieza post trabajo<br>• Usar con ventilacion adecuada<br><br>Consulta precios en el <a href="catalogo.html" style="color:var(--amarillo)">catalogo</a>.';
-    }
-
-    if (t.includes('catalogo') || t.includes('productos') || t.includes('que tienen') || t.includes('que venden') || t.includes('comprar') || t.includes('precio')) {
-      return '📖 Podes ver todos nuestros productos y precios en el <a href="catalogo.html" style="color:var(--amarillo)">catalogo completo</a>. Ahi podes filtrar por marca, categoria y agregar al carrito.';
-    }
-
-    if (t.includes('interior')) {
-      return '🏠 <b>Para interiores recomendamos:</b><br>• Latex Interior (lavable, buena cobertura)<br>• Aplicar fijador sellador si la pared es nueva<br>• Enduido para emparejar imperfecciones<br><br>Consulta precios en el <a href="catalogo.html" style="color:var(--amarillo)">catalogo</a>.';
-    }
-
-    if (t.includes('exterior')) {
-      return '🏡 <b>Para exteriores recomendamos:</b><br>• Latex Exterior (resistente al agua y sol)<br>• Para techos: Impermeabilizante<br>• Siempre aplicar fijador antes<br><br>Consulta precios en el <a href="catalogo.html" style="color:var(--amarillo)">catalogo</a>.';
-    }
-
-    if (t.includes('techo') || t.includes('impermeabilizante') || t.includes('membrana')) {
-      return '🏗️ <b>Para techos recomendamos:</b><br>• Impermeabilizante para techos<br>• Disponible en 10L y 20L<br>• Rinde aprox. 1kg/m² por mano<br><br>Consulta precios en el <a href="catalogo.html" style="color:var(--amarillo)">catalogo</a>.';
-    }
-
-    return 'Soy <b>Logo</b>, tu asistente de Freecolors. 🎨 Puedo ayudarte con:<br>• 🕐 <b>Horarios</b> de atencion<br>• 📍 <b>Ubicacion</b> de la tienda<br>• 🚚 <b>Envios</b> y entregas<br>• 💳 <b>Medios de pago</b><br>• 🏷️ <b>Marcas</b> disponibles</b><br>• 📖 <b>Catalogo</b> de productos<br><br>Escribi tu pregunta!';
-  }
-
-  window.onload = function() {
-    userInput.addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = (this.scrollHeight) + 'px';
-    });
-
-    userInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        handleSend();
-      }
-    });
-
-    sendBtn.onclick = handleSend;
+  // Mapa de tecla → etiqueta bonita para la burbuja usuario
+  var LABELS = {
+    envios:    '🚚 ¿Hacen envíos?',
+    horarios:  '🕐 ¿Cuáles son los horarios?',
+    pagos:     '💳 ¿Qué medios de pago aceptan?',
+    marcas:    '🏷️ ¿Qué marcas tienen?',
+    ubicacion: '📍 ¿Dónde están ubicados?',
+    contacto:  '📞 ¿Cómo me comunico?',
   };
 
-  function toggleMenu() {
-    document.getElementById('menuMobile').classList.toggle('abierto');
+  function getResponse(key) {
+    switch (key) {
+      case 'envios':
+        return '🚚 <b>Envíos:</b><br>• Hacemos envíos a todo Buenos Aires y alrededores<br>• Compras mayores a <b>$50.000</b>: envío gratis!<br>• Entrega en 24-48hs hábiles<br>• También podés retirar en sucursal';
+
+      case 'horarios':
+        return '🕐 <b>Horarios de atención:</b><br>• Lunes a Viernes: 8:30 a 13:00 y 15:00 a 18:30<br>• Sábados: 8:30 a 13:00<br>• Domingos y feriados: Cerrado';
+
+      case 'pagos':
+        return '💳 <b>Medios de pago:</b><br>• Efectivo<br>• Tarjeta de débito y crédito<br>• Mercado Pago';
+
+      case 'marcas':
+        return buildMarcasHTML();
+
+      case 'ubicacion':
+        return '📍 Estamos en <b>Av. Rivadavia 22606, Buenos Aires</b>. Podés ver el mapa en nuestra <a href="contacto.html" style="color:var(--amarillo)">página de contacto</a>.';
+
+      case 'contacto':
+        return '📞 <b>Contactanos:</b><br>• <a href="https://wa.me/5491131332405" style="color:#25d366" target="_blank">WhatsApp: +54 9 11 3133-2405</a><br>• También podés ver dirección y mapa en nuestra <a href="contacto.html" style="color:var(--amarillo)">página de contacto</a>';
+
+      default:
+        return '🎨 No entendí tu consulta. Tocá una de las opciones del menú.';
+    }
   }
 
-  function addMessage(role, text) {
+  function buildMarcasHTML() {
+    var marcas = [
+      { nombre: 'Freecolors', propia: true, emoji: '⭐' },
+      { nombre: 'Sherwin Williams', propia: false, emoji: '🏠' },
+      { nombre: 'Alba', propia: false, emoji: '🎨' },
+      { nombre: 'Colorin', propia: false, emoji: '🖌️' },
+      { nombre: 'Tersuave', propia: false, emoji: '✨' },
+      { nombre: 'Sanyo Jafep', propia: false, emoji: '🔵' },
+      { nombre: 'El Galgo', propia: false, emoji: '🐾' },
+      { nombre: 'Distinción', propia: false, emoji: '💎' },
+      { nombre: 'Duracril', propia: false, emoji: '💪' },
+      { nombre: 'Vitrolux', propia: false, emoji: '🪟' },
+    ];
+
+    var html = '🏷️ <b>Marcas disponibles:</b><br><small style="color:var(--gris)">Tocá una marca para buscarla en el catálogo</small>';
+    html += '<div class="marcas-grid">';
+
+    marcas.forEach(function(m) {
+      var cls = m.propia ? 'marca-pill propia' : 'marca-pill';
+      var href = 'catalogo.html';
+      html += '<a href="' + href + '" class="' + cls + '"><span class="mp-dot"></span>' + m.emoji + ' ' + m.nombre + (m.propia ? ' ★' : '') + '</a>';
+    });
+
+    html += '</div>';
+    html += '<a href="catalogo.html" class="marcas-ver-catalogo">→ Ver catálogo completo</a>';
+    return html;
+  }
+
+  function quickAsk(key) {
     var welcome = document.getElementById('welcome');
     if (welcome) welcome.style.display = 'none';
 
+    // Mostrar burbuja de usuario
+    addMessage('user', LABELS[key] || key);
+
+    // Mostrar botón inicio
+    btnInicio.classList.add('visible');
+
+    showTyping();
+    var delay = 400 + Math.random() * 400;
+    setTimeout(function() {
+      hideTyping();
+      addMessage('bot', getResponse(key));
+      // Después de responder, mostrar menú de loop
+      setTimeout(showLoopMenu, 350);
+    }, delay);
+  }
+
+  function showLoopMenu() {
+    var wrap = document.createElement('div');
+    wrap.className = 'loop-menu-wrap';
+
+    var sep = document.createElement('div');
+    sep.className = 'loop-sep';
+    sep.textContent = '¿Querés saber algo más?';
+
+    var grid = document.createElement('div');
+    grid.className = 'quick-grid';
+
+    var opciones = [
+      { key: 'envios',    icon: '🚚', label: 'Envíos',    sub: 'Zonas y tiempos' },
+      { key: 'horarios',  icon: '🕐', label: 'Horarios',  sub: 'Atención al público' },
+      { key: 'pagos',     icon: '💳', label: 'Pagos',     sub: 'Medios de pago' },
+      { key: 'marcas',    icon: '🏷️', label: 'Marcas',    sub: 'Marcas disponibles' },
+      { key: 'ubicacion', icon: '📍', label: 'Ubicación', sub: 'Dirección y mapa' },
+      { key: 'contacto',  icon: '📞', label: 'Contacto',  sub: 'WhatsApp y teléfono' },
+    ];
+
+    opciones.forEach(function(op) {
+      var btn = document.createElement('button');
+      btn.className = 'quick-btn';
+      btn.innerHTML = '<strong>' + op.icon + ' ' + op.label + '</strong><span>' + op.sub + '</span>';
+      btn.onclick = function() {
+        // Eliminar este menú de loop antes de responder
+        if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+        quickAsk(op.key);
+      };
+      grid.appendChild(btn);
+    });
+
+    wrap.appendChild(sep);
+    wrap.appendChild(grid);
+    messagesDiv.appendChild(wrap);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  function resetChat() {
+    // Limpiar chat y volver al inicio
+    messagesDiv.innerHTML = '';
+    btnInicio.classList.remove('visible');
+
+    var welcome = document.createElement('div');
+    welcome.className = 'welcome';
+    welcome.id = 'welcome';
+    welcome.innerHTML = '<h2>HOLA, SOY LOGO 🎨</h2><p>Tu asistente experto en Freecolors.<br>¿En qué puedo ayudarte hoy?</p><div class="quick-grid"><button class="quick-btn" onclick="quickAsk(\'envios\')"><strong>🚚 Envíos</strong><span>Zonas y tiempos</span></button><button class="quick-btn" onclick="quickAsk(\'horarios\')"><strong>🕐 Horarios</strong><span>Atención al público</span></button><button class="quick-btn" onclick="quickAsk(\'pagos\')"><strong>💳 Pagos</strong><span>Medios de pago</span></button><button class="quick-btn" onclick="quickAsk(\'marcas\')"><strong>🏷️ Marcas</strong><span>Marcas disponibles</span></button><button class="quick-btn" onclick="quickAsk(\'ubicacion\')"><strong>📍 Ubicación</strong><span>Dirección y mapa</span></button><button class="quick-btn" onclick="quickAsk(\'contacto\')"><strong>📞 Contacto</strong><span>WhatsApp y teléfono</span></button></div>';
+
+    messagesDiv.appendChild(welcome);
+    messagesDiv.scrollTop = 0;
+  }
+
+  function addMessage(role, text) {
     var msgDiv = document.createElement('div');
     msgDiv.className = 'msg msg-' + role;
 
@@ -448,29 +501,9 @@
     if (el) el.remove();
   }
 
-  function quickAsk(text) {
-    userInput.value = text;
-    handleSend();
+  function toggleMenu() {
+    document.getElementById('menuMobile').classList.toggle('abierto');
   }
-
-  function handleSend() {
-    var text = userInput.value.trim();
-    if (!text) return;
-
-    addMessage('user', text);
-    userInput.value = '';
-    userInput.style.height = 'auto';
-
-    showTyping();
-
-    var delay = 400 + Math.random() * 600;
-    setTimeout(function() {
-      hideTyping();
-      addMessage('bot', getResponse(text));
-    }, delay);
-  }
-
-
 </script>
 </body>
 </html>

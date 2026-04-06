@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <!--
-╔══════════════════════════════════════════════════════════════╗
+╔═════════════════════════════════════════════════════════════╗
 ║  FREECOLORS — CATÁLOGO  v4.0  (producción)                  ║
-╠══════════════════════════════════════════════════════════════╣
-║  CAMBIOS v4.0 vs v3.0:                                       ║
-║  • Paleta rediseñada para coincidir con el logo oficial:     ║
-║    fondo #07091d (casi negro-azul), azul eléctrico #0044ff,  ║
-║    violeta vibrante #9900ee                                  ║
-║  • Header: gradiente diagonal 155° + rayos -45° superpuestos ║
-║    simulan las franjas de luz del logo                       ║
+╠═════════════════════════════════════════════════════════════╣
+║  CAMBIOS v4.0 vs v3.0:                                      ║
+║  • Paleta rediseñada para coincidir con el logo oficial:    ║
+║    fondo #07091d (casi negro-azul), azul eléctrico #0044ff, ║
+║    violeta vibrante #9900ee                                 ║
+║  • Header: gradiente diagonal 155° + rayos -45° superpuestos║
+║    simulan las franjas de luz del logo                      ║
 ║  • Nav: fondo rgba(7,9,29,0.97) — más oscuro y consistente  ║
-║  • Carrito y modales con micro-degradado azul/violeta        ║
+║  • Carrito y modales con micro-degradado azul/violeta       ║
 ║  • Shadow de botones y cards ajustado a la nueva paleta     ║
 ║  • Código organizado y comentado (sin cambios funcionales)  ║
-╠══════════════════════════════════════════════════════════════╣
-║  ESTRUCTURA DEL SCRIPT (módulos en orden):                   ║
+╠═════════════════════════════════════════════════════════════╣
+║  ESTRUCTURA DEL SCRIPT (módulos en orden):                  ║
 ║    A. Configuración  → IDs, WhatsApp, constantes            ║
-║    B. Datos estáticos → categorías, colores, filtros        ║
-║    C. Google Sheets  → carga y parsea el catálogo           ║
+║    B. Datos estáticos →categorías, colores, filtros         ║
+║    C. Supabase  →      carga y parsea el catálogo           ║
 ║    D. Agrupado       → une variantes, ordena tamaños        ║
-║    E. Estado         → qué filtros tiene el usuario activos  ║
+║    E. Estado         → qué filtros tiene el usuario activos ║
 ║    F. Filtros        → lógica de filtrado y búsqueda        ║
 ║    G. Renderizado    → genera el HTML de tarjetas           ║
 ║    H. Acciones       → responde a clicks del usuario        ║
 ║    I. Carrito        → agregar, modificar, persistir        ║
 ║    J. Checkout       → validar y enviar por WhatsApp        ║
 ║    K. Inicio         → punto de entrada, arranca todo       ║
-╚══════════════════════════════════════════════════════════════╝
+╚═════════════════════════════════════════════════════════════╝
 -->
 <html lang="es">
 <head>
@@ -2828,7 +2828,7 @@ function obtenerFiltrosActivosComoChips() {
 /** Formatea un número como precio argentino: 52900 → "52.900,00" */
 function formatearPrecio(n) {
   if (n < 10) return 'Consultar';
-  return Number(n).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return Number(n).toLocaleString('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 2 });
 }
 
 /** Envuelve en <mark> las coincidencias de búsqueda en un texto. */
@@ -3020,7 +3020,7 @@ function htmlTarjetaProducto(producto, indice) {
     precioHtml = `<div class="producto-precio" id="precio-${producto.id}">Consultar</div>`;
   } else if (producto.tieneRango && !tieneSeleccion) {
     const badgeEst = producto._tieneEstimados ? `<span class="precio-estimado-badge" title="Precio estimado por IA para 2026">≈ est.</span>` : '';
-    precioHtml = `<div class="producto-precio" id="precio-${producto.id}"><small>Desde</small> $${formatearPrecio(producto.precioMin)}${badgeEst}</div>`;
+    precioHtml = `<div class="producto-precio" id="precio-${producto.id}"> $${formatearPrecio(producto.precioMin)}${badgeEst}</div>`;
   } else {
     const esEst = varActiva?._estimado;
     const badgeEst = esEst ? `<span class="precio-estimado-badge" title="Precio estimado por IA para 2026">≈ est.</span>` : '';

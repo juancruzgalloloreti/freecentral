@@ -1,6 +1,7 @@
 /* MÓDULO: AGRUPADO DE PRODUCTOS */
 
-import { detectarMarca, MARCAS_MULTI, MARCAS_SET, PALABRAS_GENERICAS } from './marcas.js';
+import { supabase } from './supabase.js'
+import { detectarMarca, MARCA_ALIAS, MARCAS_MULTI, MARCAS_SET, PALABRAS_GENERICAS } from './marcas.js';
 import { detectarColor, COLOR_HEX_MAP, CAT_COLOR, inferirCategoria } from './categorias.js';
 import { estado, normalizar } from './filtros.js';
 
@@ -122,6 +123,37 @@ export function extraerVariante(nombreCompleto, nombreBase) {
   return { label: '', hex: null, tipo: 'unico' };
 }
 
+export async function obtenerProductosDesdeDB() {
+  const { data, error } = await supabase
+    .from('productos')
+    .select('*')
+
+  if (error) {
+    console.error('Error cargando Supabase:', error)
+    return []
+  }
+
+  // Adaptar estructura a lo que espera tu sistema
+  return data.map(p => ({
+    id: p.id,
+    nombre: p.nombre,
+    codigo: p.codigo,
+    precio: Number(p.precio_lista) || 0,
+    stock: p.stock || 0,
+    marcaSheet: p.marca || ''
+  }))
+}
+
+export async function obtenerCatalogoProcesado() {
+  const productosRaw = await obtenerProductosDesdeDB()
+
+  if (!productosRaw.length) return []
+
+  const catalogo = agruparProductos(productosRaw)
+
+  return catalogo
+}
+
 export function agruparProductos(rawProductos) {
   const grupos = new Map();
 
@@ -193,7 +225,11 @@ export function agruparProductos(rawProductos) {
 
     const marcaSheet = filas.find(f => f.marcaSheet)?.marcaSheet || '';
     const marcaDelNombre = detectarMarca(nombreBase);
-    const marcaDetectada = marcaDelNombre || marcaSheet;
+    // Normalizar marcaSheet vía MARCA_ALIAS para evitar duplicados (ej: "Colorin" vs "Colorín")
+    const marcaSheetNorm = marcaSheet
+      ? (MARCA_ALIAS[marcaSheet.trim().toUpperCase()] || marcaSheet)
+      : null;
+    const marcaDetectada = marcaSheetNorm || detectarMarca(nombreBase) || 'Otras';
     catalogoFinal.push({
       id: idCounter++,
       nombre: nombreBase,

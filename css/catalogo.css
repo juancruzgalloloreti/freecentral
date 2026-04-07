@@ -408,13 +408,11 @@ mark { background: rgba(255,205,60,0.4); border-radius: 3px; padding: 0 2px; }
 .variantes-bloque {
   display: flex; flex-wrap: wrap; gap: 8px;
   margin-bottom: 0.85rem;
-  min-height: 44px;
   align-items: center;
 }
 
 .producto-tags {
   display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 0.75rem;
-  min-height: 24px;
 }
 .producto-tag {
   background: #eef5ff; color: #2563eb;

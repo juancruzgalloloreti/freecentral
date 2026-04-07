@@ -109,8 +109,8 @@ export function renderizarGrilla(productosFiltrados) {
   const btnMas   = document.getElementById('btnCargarMas');
   const contador = document.getElementById('contadorResultados');
 
-  const total    = productosFiltrados.length;
-  const cant     = Math.min(estado.productosVisibles, total);
+  const total = productosFiltrados.length;
+  const cant  = Math.min(estado.productosVisibles, total);
   const pagina   = productosFiltrados.slice(0, cant);
 
   contador.innerHTML = `Mostrando <strong>${cant}</strong> de <strong>${total}</strong> productos`;
@@ -150,10 +150,16 @@ export function renderizarBarraCategorias() {
     if (p.marca) marcaCount[p.marca] = (marcaCount[p.marca] || 0) + 1;
   });
 
+  const MARCAS_PRIORITARIAS_BARRA = ['Freecolors', 'Sherwin Williams', 'Colorín', 'Andina', 'El Galgo', 'Sanyo Jafep'];
   const marcasOrdenadas = Object.entries(marcaCount)
     .sort((a, b) => {
       if (a[0] === 'Otras') return 1;
       if (b[0] === 'Otras') return -1;
+      const priA = MARCAS_PRIORITARIAS_BARRA.indexOf(a[0]);
+      const priB = MARCAS_PRIORITARIAS_BARRA.indexOf(b[0]);
+      if (priA >= 0 && priB >= 0) return priA - priB;
+      if (priA >= 0) return -1;
+      if (priB >= 0) return 1;
       return b[1] - a[1];
     });
 
@@ -373,7 +379,7 @@ export function htmlPanelFiltros() {
   CATALOGO.forEach(p => {
     if (p.marca) marcasDisponibles[p.marca] = (marcasDisponibles[p.marca] || 0) + 1;
   });
-  const MARCAS_PRIORITARIAS = ['Freecolors', 'Sherwin Williams'];
+  const MARCAS_PRIORITARIAS = ['Freecolors', 'Sherwin Williams', 'Colorín', 'Andina', 'El Galgo', 'Sanyo Jafep'];
   const marcasOrdenadas = Object.entries(marcasDisponibles)
     .sort((a, b) => {
       const priA = MARCAS_PRIORITARIAS.indexOf(a[0]);

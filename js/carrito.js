@@ -8,6 +8,7 @@ import { formatearPrecio } from './render.js';
 
 export let carrito = [];
 const STOCK_FALLBACK = 10;
+const _btnTimers = new Map();
 
 export function guardarCarrito() {
   try {
@@ -206,10 +207,18 @@ export function agregarAlCarrito(productoId, mostrarToast) {
 
   const btn = document.getElementById(`btn-${productoId}`);
   if (btn) {
-    const oldText = btn.textContent;
+    const oldText = btn.dataset.labelOriginal || (btn.textContent !== '✓' ? btn.textContent : '+');
+    btn.dataset.labelOriginal = oldText;
     btn.classList.add('agregado');
     btn.textContent = '✓';
-    setTimeout(() => { btn.classList.remove('agregado'); btn.textContent = oldText; }, 1000);
+    if (_btnTimers.has(productoId)) clearTimeout(_btnTimers.get(productoId));
+    const t = setTimeout(() => {
+      btn.classList.remove('agregado');
+      btn.textContent = oldText;
+      delete btn.dataset.labelOriginal;
+      _btnTimers.delete(productoId);
+    }, 1200);
+    _btnTimers.set(productoId, t);
   }
 
   mostrarToast('✓ Agregado al pedido');
@@ -270,6 +279,12 @@ export function seleccionarVariante(productoId, varianteIdx) {
 
   const btn = document.getElementById(`btn-${productoId}`);
   if (btn) {
+    if (_btnTimers.has(productoId)) {
+      clearTimeout(_btnTimers.get(productoId));
+      _btnTimers.delete(productoId);
+    }
+    btn.classList.remove('agregado');
+    delete btn.dataset.labelOriginal;
     const esConsulta = variante.precio < 10;
     btn.textContent = esConsulta ? '💬' : '+';
     btn.disabled = variante.stock <= 0 && !esConsulta;

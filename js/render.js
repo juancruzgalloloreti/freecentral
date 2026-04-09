@@ -32,36 +32,20 @@ export function htmlTarjetaProducto(producto, indice) {
 
   let swatchesHtml = '';
   if (variantes.length > 1) {
-    if (producto.tipoVariante === 'color') {
-      const items = variantes.map((v, i) => {
-        const esBlanco  = ['#f5f5f5','#f8f8f8','#e8e8e8','#f0f0f0'].includes(v.hex);
-        const bordeExtra = esBlanco ? 'border:1.5px solid #ccc;' : '';
-        const matcheaFiltro = v.precio >= estado.precioMin && v.precio <= estado.precioMax && (!estado.soloConStock || v.stock > 0);
-        const claseFiltro = matcheaFiltro ? '' : 'opaca';
-        const clases = `swatch-color${i === selIdx ? ' activo' : ''}${v.stock <= 0 ? ' sin-stock' : ''} ${claseFiltro}`;
-        const onclickAttr = matcheaFiltro ? `onclick="seleccionarVariante(${producto.id}, ${i})"` : 'style="cursor:not-allowed;pointer-events:none"';
-        const priceLabel = v.precio < 10 ? 'Consultar' : `$${formatearPrecio(v.precio)}`;
-        return `<button class="${clases}" style="background:${v.hex};${bordeExtra}" ${onclickAttr} title="${v.label}${v.stock <= 0 ? ' — sin stock' : ''} (${priceLabel})${!matcheaFiltro ? ' — no cumple filtros' : ''}" aria-label="${v.label}"></button>`;
-      }).join('');
-      swatchesHtml = `<div class="variantes-bloque">${items}</div>`;
-    } else {
-      const items = variantes.map((v, i) => {
-        const matcheaFiltro = v.precio >= estado.precioMin && v.precio <= estado.precioMax && (!estado.soloConStock || v.stock > 0);
-        const claseFiltro = matcheaFiltro ? '' : 'opaca';
-        const clases = `swatch-chip${i === selIdx ? ' activo' : ''}${v.stock <= 0 ? ' sin-stock' : ''} ${claseFiltro}`;
-        const onclickAttr = matcheaFiltro ? `onclick="seleccionarVariante(${producto.id}, ${i})"` : 'style="cursor:not-allowed;pointer-events:none"';
-        const priceLabel = v.precio < 10 ? 'Consultar' : `$${formatearPrecio(v.precio)}`;
-        return `<button class="${clases}" ${onclickAttr} title="${v.label}${v.stock <= 0 ? ' — sin stock' : ''} (${priceLabel})${!matcheaFiltro ? ' — no cumple filtros' : ''}">${v.label}</button>`;
-      }).join('');
-      swatchesHtml = `<div class="variantes-bloque">${items}</div>`;
-    }
+    const options = variantes.map((v, i) => {
+      const matcheaFiltro = v.precio >= estado.precioMin && v.precio <= estado.precioMax && (!estado.soloConStock || v.stock > 0);
+      const priceLabel = v.precio < 10 ? 'Consultar' : `$${formatearPrecio(v.precio)}`;
+      const stockSufijo = v.stock <= 0 ? ' · Sin stock' : '';
+      const label = (v.label || `Opción ${i + 1}`) + stockSufijo;
+      return `<option value="${i}" ${i === selIdx ? 'selected' : ''} ${!matcheaFiltro ? 'disabled' : ''}>${label}</option>`;
+    }).join('');
+    swatchesHtml = `<select class="variante-select" onchange="seleccionarVariante(${producto.id}, parseInt(this.value))">${options}</select>`;
   }
 
   const badgeHtml    = producto.badge ? `<span class="producto-badge">${producto.badge}</span>` : '';
   const sinStockHtml = !varConStock ? `<span class="producto-badge sin-stock">Sin stock</span>` : '';
   const nombreHtml   = resaltarCoincidencia(producto.nombre, estado.busqueda);
-  const varLabel     = (variantes.length > 1 && varActiva?.label)
-    ? `<span class="variante-label" id="vl-${producto.id}">${varActiva.label}</span>` : '';
+  const varLabel = '';
 
   const filtrosActivos = estado.busqueda.trim() !== '' || estado.soloConStock || estado.precioMin > _precioMin || estado.precioMax < _precioMax;
   const tieneSeleccion = _varianteSel.has(producto.id) || filtrosActivos;
@@ -91,7 +75,7 @@ export function htmlTarjetaProducto(producto, indice) {
     <div class="tarjeta-producto" data-pid="${producto.id}" style="--cat-color:${catColor};animation-delay:${delay}s">
       <div class="producto-info">
         ${badgeHtml}${sinStockHtml}
-        <h3 class="producto-nombre">${nombreHtml}</h3>
+        <h3 class="producto-nombre" title="${producto.nombre}" style="-webkit-line-clamp:3">${nombreHtml}</h3>
         ${varLabel}
         ${swatchesHtml}
         ${tagsHtml ? `<div class="producto-tags">${tagsHtml}</div>` : ''}

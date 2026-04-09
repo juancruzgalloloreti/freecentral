@@ -119,13 +119,7 @@ export function renderizarGrilla(productosFiltrados) {
 
 export function renderizarBarraCategorias() {
   if (!CATALOGO.length) {
-    document.getElementById('barraCategorias').innerHTML =
-      `<div class="categorias-lista">
-        <div class="estado-carga" style="padding:0.5rem 1rem;flex-direction:row;">
-          <div class="spinner" style="width:18px;height:18px;border-width:2px;"></div>
-          <span style="font-size:0.8rem;color:var(--color-gris)">Cargando...</span>
-        </div>
-      </div>`;
+    document.getElementById('barraCategorias').innerHTML = '<div class="categorias-lista"></div>';
     return;
   }
 

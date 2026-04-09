@@ -78,7 +78,7 @@
         <div class="buscador-caja">
           <span>🔍</span>
           <input
-            type="search"
+            type="text"
             class="buscador-input"
             id="inputBusqueda"
             placeholder="Buscar productos, marcas..."
@@ -86,7 +86,9 @@
             autocapitalize="off"
             spellcheck="false"
             oninput="onBusquedaInput()"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();onBusquedaInput();}"
           >
+          <button class="btn-limpiar-busqueda" id="btnLimpiarBusqueda" onclick="limpiarBusqueda()">✕</button>
           
         </div>
         <div class="herramientas-fila">

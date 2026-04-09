@@ -10,6 +10,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/catalogo.css">
+  <style>
+    /* Carrito: solo FAB en mobile, solo nav en desktop */
+    @media (min-width: 768px) {
+      #btnCarritoNav { display: flex !important; }
+      .fab-carrito   { display: none !important; }
+    }
+    @media (max-width: 767px) {
+      #btnCarritoNav { display: none !important; }
+      .fab-carrito   { display: flex !important; }
+    }
+    /* Texto de tarjeta más compacto */
+    .variante-select { font-size: 0.78rem !important; }
+    .producto-tag    { font-size: 0.68rem !important; }
+  </style>
 </head>
 
 <body>
@@ -25,7 +39,7 @@
       <li><a href="contacto.html">Contacto</a></li>
     </ul>
     <div class="nav-acciones">
-      <button class="btn-carrito-nav" onclick="toggleCarrito()">
+      <button class="btn-carrito-nav" onclick="toggleCarrito()" style="display:none" id="btnCarritoNav">
         🛒 <span class="badge-carrito" id="badgeCarritoNav">0</span>
       </button>
       <button class="btn-menu-mobile" onclick="toggleMenuMobile()" aria-label="Abrir menú">☰</button>
@@ -43,17 +57,12 @@
   <header class="header-catalogo">
     <span class="header-badge">🎨 Catálogo completo</span>
     <h1>NUESTROS<br><em>PRODUCTOS</em></h1>
-    <p id="headerSubtitulo">Cargando catálogo...</p>
+    <p id="headerSubtitulo">Explorá nuestro catálogo completo.</p>
   </header>
 
   <!-- ══ CHIPS DE CATEGORÍA (se llena con JS) ═════ -->
   <div class="barra-categorias" id="barraCategorias">
-    <div class="categorias-lista">
-      <div class="estado-carga" style="padding:0.5rem 1rem;flex-direction:row;">
-        <div class="spinner" style="width:18px;height:18px;border-width:2px;"></div>
-        <span style="font-size:0.8rem;color:var(--color-gris)">Cargando...</span>
-      </div>
-    </div>
+    <div class="categorias-lista"></div>
   </div>
 
   <!-- ══ CHIPS DE FILTROS ACTIVOS (se llena con JS) ═ -->
@@ -92,7 +101,7 @@
           
         </div>
         <div class="herramientas-fila">
-          <span class="contador-resultados" id="contadorResultados">Cargando...</span>
+          <span class="contador-resultados" id="contadorResultados"></span>
           <select class="select-orden" id="selectOrden" onchange="onOrdenChange()">
             <option value="relevancia">Relevancia</option>
             <option value="precio-asc">Precio ↑</option>

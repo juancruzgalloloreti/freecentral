@@ -75,7 +75,7 @@ export function htmlTarjetaProducto(producto, indice) {
     <div class="tarjeta-producto" data-pid="${producto.id}" style="--cat-color:${catColor};animation-delay:${delay}s">
       <div class="producto-info">
         ${badgeHtml}${sinStockHtml}
-        <h3 class="producto-nombre" title="${producto.nombre}" style="-webkit-line-clamp:3">${nombreHtml}</h3>
+        <h3 class="producto-nombre" title="${producto.nombre}">${nombreHtml}</h3>
         ${varLabel}
         ${swatchesHtml}
         ${tagsHtml ? `<div class="producto-tags">${tagsHtml}</div>` : ''}
@@ -280,13 +280,7 @@ export function htmlPanelFiltros() {
   const contarCampo = (campo, val) => CATALOGO.filter(p => p[campo] === val).length;
   const contarProp  = (prop)       => CATALOGO.filter(p => (p.propiedades || []).includes(prop)).length;
 
-  const secOrden = crearSeccion('Ordenar por', `
-    <select class="filtro-select" onchange="onOrdenChangeSidebar(this.value)">
-      <option value="relevancia"  ${estado.orden==='relevancia' ?'selected':''}>Relevancia</option>
-      <option value="precio-asc"  ${estado.orden==='precio-asc' ?'selected':''}>Precio: menor a mayor</option>
-      <option value="precio-desc" ${estado.orden==='precio-desc'?'selected':''}>Precio: mayor a menor</option>
-      <option value="nombre-az"   ${estado.orden==='nombre-az'  ?'selected':''}>Nombre A → Z</option>
-    </select>`, 'orden', true);
+  const secOrden = '';
 
   let secSubs = '';
   if (estado.categoria !== null) {

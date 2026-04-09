@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sub = document.getElementById('headerSubtitulo');
     if (sub) {
       const totalCargados = window._totalProductosCargados || CATALOGO.reduce((sum, p) => sum + (p.variantes ? p.variantes.length : 1), 0);
-      sub.textContent = `${totalCargados.toLocaleString('es-AR')} productos disponibles. Encontrá lo que necesitás con los filtros.`;
+      sub.textContent = `Encontrá lo que necesitás con los filtros.`;
     }
  
     estado.precioMin = _precioMin;

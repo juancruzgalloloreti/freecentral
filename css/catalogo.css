@@ -395,8 +395,8 @@ mark { background: rgba(255,205,60,0.4); border-radius: 3px; padding: 0 2px; }
   line-height: 1.35;
   margin-bottom: 0.4rem;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
   min-height: 3.6em;

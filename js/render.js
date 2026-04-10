@@ -32,14 +32,20 @@ export function htmlTarjetaProducto(producto, indice) {
 
   let swatchesHtml = '';
   if (variantes.length > 1) {
-    const options = variantes.map((v, i) => {
-      const matcheaFiltro = v.precio >= estado.precioMin && v.precio <= estado.precioMax && (!estado.soloConStock || v.stock > 0);
-      const priceLabel = v.precio < 10 ? 'Consultar' : `$${formatearPrecio(v.precio)}`;
-      const stockSufijo = v.stock <= 0 ? ' · Sin stock' : '';
-      const label = (v.label || `Opción ${i + 1}`) + stockSufijo;
-      return `<option value="${i}" ${i === selIdx ? 'selected' : ''} ${!matcheaFiltro ? 'disabled' : ''}>${label}</option>`;
-    }).join('');
-    swatchesHtml = `<select class="variante-select" onchange="seleccionarVariante(${producto.id}, parseInt(this.value))">${options}</select>`;
+    // Solo mostrar el select si al menos una variante tiene label real
+    const tienenLabel = variantes.some(v => v.label && v.label.trim());
+    if (tienenLabel) {
+      const options = variantes.map((v, i) => {
+        const matcheaFiltro = v.precio >= estado.precioMin && v.precio <= estado.precioMax && (!estado.soloConStock || v.stock > 0);
+        const priceLabel = v.precio < 10 ? 'Consultar' : `$${formatearPrecio(v.precio)}`;
+        const stockSufijo = v.stock <= 0 ? ' · Sin stock' : '';
+        // Usar el label real; si está vacío, derivar del código o usar "Estándar"
+        const labelBase = v.label?.trim() || (v.codigo ? `Cód. ${v.codigo}` : 'Estándar');
+        const label = labelBase + stockSufijo;
+        return `<option value="${i}" ${i === selIdx ? 'selected' : ''} ${!matcheaFiltro ? 'disabled' : ''}>${label}</option>`;
+      }).join('');
+      swatchesHtml = `<select class="variante-select" onchange="seleccionarVariante(${producto.id}, parseInt(this.value))">${options}</select>`;
+    }
   }
 
   const badgeHtml    = producto.badge ? `<span class="producto-badge">${producto.badge}</span>` : '';

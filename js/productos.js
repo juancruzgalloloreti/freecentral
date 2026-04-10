@@ -46,21 +46,45 @@ export function extraerGrupoBase(nombre) {
 
   if (marcaPosEnd > 0) {
     const parteBase = sinTam.substring(0, marcaPosEnd).trim();
-    return (parteBase + sufijo).replace(/\s+/g, ' ').trim() || nombre;
-  }
-
-  const colorKeys = Object.keys(COLOR_HEX_MAP).sort((a, b) => b.length - a.length);
-  for (const k of colorKeys) {
-    const regex = new RegExp('\\b' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi');
-    if (regex.test(g)) {
-      g = g.replace(regex, '').replace(/\s+/g, ' ').trim();
-      break;
+    // Incluir lo que viene DESPUÉS de la marca pero antes del tamaño,
+    // salvo descriptores de acabado y colores (ej: "RAPIFIX UV" → UV se preserva)
+    let restoTrasM = sinTam.substring(marcaPosEnd).trim();
+    const STRIP_TRAS_MARCA = ['BRILLANTE', 'MATE', 'SATINADO', 'MADERA', 'MADERS', 'COLORES', 'VARIOS', 'PREMIUM', 'PRO'];
+    for (const d of STRIP_TRAS_MARCA) {
+      restoTrasM = restoTrasM.replace(new RegExp('\\b' + d + '\\b', 'gi'), '').replace(/\s+/g, ' ').trim();
     }
+    // Strip colors del resto
+    const colorKeysSorted = Object.keys(COLOR_HEX_MAP).sort((a, b) => b.length - a.length);
+    for (const k of colorKeysSorted) {
+      const regex = new RegExp('\\b' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi');
+      if (regex.test(restoTrasM)) {
+        restoTrasM = restoTrasM.replace(regex, '').replace(/\s+/g, ' ').trim();
+        break;
+      }
+    }
+    const baseCompleta = (parteBase + (restoTrasM ? ' ' + restoTrasM : '')).trim();
+    return (baseCompleta + sufijo).replace(/\s+/g, ' ').trim() || nombre;
   }
 
-  const descriptores = ['BRILLANTE', 'MATE', 'SATINADO', 'MADERA', 'MADERS', 'COLORES', 'VARIOS', 'PREMIUM', 'PRO'];
-  for (const d of descriptores) {
-    g = g.replace(new RegExp('\\b' + d + '\\b', 'gi'), '').replace(/\s+/g, ' ').trim();
+  // Para accesorios y herramientas el color ES parte de la identidad del producto
+  // (ej: "Cinta Verde" ≠ "Cinta Azul"). Solo stripear para pinturas.
+  const catInferida = inferirCategoria(g);
+  const esPintura = catInferida.cat === 'pinturas';
+
+  if (esPintura) {
+    const colorKeys = Object.keys(COLOR_HEX_MAP).sort((a, b) => b.length - a.length);
+    for (const k of colorKeys) {
+      const regex = new RegExp('\\b' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi');
+      if (regex.test(g)) {
+        g = g.replace(regex, '').replace(/\s+/g, ' ').trim();
+        break;
+      }
+    }
+
+    const descriptores = ['BRILLANTE', 'MATE', 'SATINADO', 'MADERA', 'MADERS', 'COLORES', 'VARIOS', 'PREMIUM', 'PRO'];
+    for (const d of descriptores) {
+      g = g.replace(new RegExp('\\b' + d + '\\b', 'gi'), '').replace(/\s+/g, ' ').trim();
+    }
   }
 
   return g.trim() || nombre;

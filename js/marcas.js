@@ -40,7 +40,7 @@ export const MARCA_ALIAS = {
   'ROSARPINT':'Rosarpint','ROSRPINT':'Rosarpint','MACAVI':'Macavi',
   'RECUPLAST':'Recuplast','MERCLIN':'Merclin','DARDO':'Dardo','CRISTIAN':'Cristian',
   'HUNTER':'Hunter','MADERIN':'Maderin','SIKA':'Sika','POLACRIN':'Polacrin',
-  'ROSEMOL':'Rosemol','ROCEMOL':'Rosemol','NORTON':'Norton','ROTTWEILER':'Rottweiler',
+  'ROCEMOL':'Rocemol','ROCEMOL':'Rosemol','NORTON':'Norton','ROTTWEILER':'Rottweiler',
   'BRIKOL':'Brikol','CASABLANCA':'Casablanca','NORLAK':'Norlak',
   'ANCLAFLEX':'Anclaflex','KOBERTECH':'Kobertech','KOVERTECH':'Kobertech',
   'GALA':'Gala','VITELAST':'Vitecso','COLORTONE':'Colorín','Z10':'Colorín',

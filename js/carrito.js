@@ -341,7 +341,7 @@ function validarFormulario() {
     : (mostrarError('errorNombre', 'nombreCliente'), ok = false);
 
   const tel = document.getElementById('telCliente').value.trim();
-  /^[\d\s\-\(\)]{8,}$/.test(tel)
+  /^\+?[\d\s\-\(\)]{8,}$/.test(tel)
     ? ocultarError('errorTel', 'telCliente')
     : (mostrarError('errorTel', 'telCliente'), ok = false);
 

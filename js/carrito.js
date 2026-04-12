@@ -12,13 +12,13 @@ const _btnTimers = new Map();
 
 export function guardarCarrito() {
   try {
-    sessionStorage.setItem(CLAVE_CARRITO, JSON.stringify(carrito));
+    localStorage.setItem(CLAVE_CARRITO, JSON.stringify(carrito));
   } catch { /* ignorar */ }
 }
 
 export function cargarCarrito() {
   try {
-    const guardado = sessionStorage.getItem(CLAVE_CARRITO);
+    const guardado = localStorage.getItem(CLAVE_CARRITO);
     carrito = guardado ? JSON.parse(guardado) : [];
   } catch {
     carrito = [];
@@ -174,12 +174,6 @@ export function agregarAlCarrito(productoId, mostrarToast) {
   const vLabel   = variante.label  || '';
   const rawStock = leerStock(variante.stock);
   const stockMax = rawStock === null ? STOCK_FALLBACK : Math.max(0, rawStock);
-
-  const precioValido = precio >= estado.precioMin && precio <= estado.precioMax;
-  if (!precioValido) {
-    mostrarToast('⚠️ Este producto no está en el rango de precios filtrado');
-    return;
-  }
 
   if (estado.soloConStock && stockMax <= 0) {
     mostrarToast('⚠️ Este producto no tiene stock disponible');
@@ -347,7 +341,7 @@ function validarFormulario() {
     : (mostrarError('errorNombre', 'nombreCliente'), ok = false);
 
   const tel = document.getElementById('telCliente').value.trim();
-  tel.replace(/\D/g, '').length >= 8
+  /^[\d\s\-\(\)]{8,}$/.test(tel)
     ? ocultarError('errorTel', 'telCliente')
     : (mostrarError('errorTel', 'telCliente'), ok = false);
 

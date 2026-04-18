@@ -1,95 +1,191 @@
-/* MÓDULO: AGRUPADO DE PRODUCTOS */
+/* MÓDULO: AGRUPADO DE PRODUCTOS — v2 (Smart Brand-Position Grouping) */
 
-import { supabase } from './supabase.js'
-import { detectarMarca, MARCA_ALIAS, MARCAS_MULTI, MARCAS_SET, PALABRAS_GENERICAS } from './marcas.js';
+// supabase.js eliminado: era código muerto (sheets.js usa fetch() raw).
+import { detectarMarca, MARCA_ALIAS } from './marcas.js';
 import { detectarColor, COLOR_HEX_MAP, CAT_COLOR, inferirCategoria } from './categorias.js';
 import { estado, normalizar } from './filtros.js';
 
+/* ══════════════════════════════════════════════════════════════
+   CONSTANTES DEL ALGORITMO
+══════════════════════════════════════════════════════════════ */
+
+// Marcas/líneas que aparecen DENTRO del nombre del producto
+// Ordenadas por longitud desc para que match multi-palabra antes que mono-palabra
+const MARCAS_EN_NOMBRE = [
+  'VITROLUX MAGIC','SANYO JAFEP','SHERWIN WILLIAMS','RUST OLEUM','RUST-OLEUM',
+  'EL GALGO','BALANCE BRILLANTE','BALANCE SATINADO','CLASSIC BRILLANTE','CLASSIC SATINADO',
+  'PREFERENCE','DISTINCION','ALBALUX','DAMA','COLORIN','VITROLUX',
+  'LIQUITECH','THERMOCONTROL','DURACRIL','MICROMEMBRANA','LIVING',
+  'SEAKROME','MARTILUX','VITROSPRAY','AUTOPOLISH','SATINE','EMOCION','ACRYLATEX',
+  'DECORCRYL','NEOCRYL','RINDEMAX','COMODIN','COLORTONE','Z10','DURALBA','ALBACRYL',
+  'SATINOL','ACUAREL','ABRO','KRYLON','RECUPLAST','SIKA','BOSTIK','KLAUKOL',
+  'POXIPOL','VENIER','SILOC','ROSARPINT','MACAVI','MERCLIN','DARDO','NORTON','GALA',
+  'RAPIFIX','CETOL','GALGO','LUSQTOFF','BOXING','PENTRILO','TUCAN',
+  'TERSUAVE','OSMOCOLOR','MEMBREX','BRIKOL','CASABLANCA','NORLAK',
+  'ANCLAFLEX','KOBERTECH','HUNTER','MADERIN','POLACRIN','ROCEMOL',
+  'ROTTWEILER','HELP','TACSA','EMEDE','TINEX','DIXILINA','VITECSO',
+  'CERESITA','TACURU','NATIVA','REGIDOR','PEGALO','UNIPEGA',
+  'VERTIENTE','TUYANGO','EMAPI','KIWI','DAG','REMOCER','MADERSOL',
+  'FANATITE','COLORMELL','FREECOLORS','PARTHENON','RUCAR',
+  'ALBA','LOXON','METALATEX',
+].sort((a, b) => b.length - a.length);
+
+// Tokens de tipo de producto (palabras estructurales, NO son colores ni marcas)
+const TYPE_TOKENS = new Set([
+  'BARNIZ','AL','AGUA','ESMALTE','SINTETICO','LATEX','LACA','MEMBRANA','EN','PASTA',
+  'POLIURETANICA','IMPERMEABILIZANTE','ANTIOXIDO','ANTICORROSIVO','ENTONADOR','UNIVERSAL',
+  'FONDO','IMPRIMANTE','IMPRIMACION','LIJA','CINTA','RODILLO','PINCEL','BROCHA',
+  'ESPATULA','AEROSOL','ADHESIVO','CEMENTO','DE','CONTACTO','AGUARRAS',
+  'THINNER','DILUYENTE','SOLVENTE','TINTA','PARA','MADERA','MINIO','Y',
+  'MEDIANERAS','MUROS','SELLADOR','INTERIOR','EXTERIOR','DECK',
+  'HIDROPLASTIFICANTE','PARQUET','VITROPLASTIFICANTE','BALANCE','SATINADO','BRILLANTE',
+  'CLASSIC','FLEX','CONVERTIDOR','TECHO','CHICO','GRANDE','AMOLADORA','CON','VELCRO',
+  'ACERO','MANGO','DISCO','SEAKROME',
+]);
+
+// Lista COMPLETA de colores para stripping (incluye todos los que aparecen en el CSV)
+const TODOS_LOS_COLORES = [
+  'VERDE CROMO INTENSO','VERDE CROMO PALIDO','MARFIL CHAMPAGNE','DAMASCO SIRIO',
+  'NEGRO ANGOLA','NEGRO BRILLANTE','NEGRO MADERAS','NEGRO MATE',
+  'BLANCO BRILLANTE','BLANCO SATINADO','BLANCO MATE',
+  'HABANO CUBANO','MAGENTA FLORIDA','LILA MARSELLA','BEIGE SINAI',
+  'AMARILLO PROFUNDO','AMARILLO MEDIANO','AMARILLO LIMON','AMARILLO PASTEL',
+  'AMARILLO CROMO','AMARILLO MEDIO','AMARILLO SOL',
+  'AZUL ADRIATICO','AZUL BANDERA','AZUL TRAFUL','AZUL VERDOSO','AZUL CIELO',
+  'AZUL PASTEL','AZUL FRANCIA','AZUL EGEO','AZUL NOCHE',
+  'AZUL MARINO','AZUL REAL','AZUL OSCURO','AZUL MEDIO',
+  'CELESTE BEBE','CELESTE PASTEL','CELESTE DUBAI',
+  'VERDE COUNTRY','VERDE NILO','VERDE PINO','VERDE OSCURO','VERDE INTENSO','VERDE PALIDO',
+  'VERDE INGLES','VERDE FRESCO','VERDE NOCHE','VERDE ILUSION','VERDE CLARO',
+  'VERDE MUSGO','VERDE OLIVA','VERDE LIMA','VERDE PISTACHO','VERDE JADE','VERDE AGUA','VERDE SECO',
+  'NARANJA HOLANDES',
+  'GRIS ARTICO','GRIS ESPACIAL','GRIS LONDRES','GRIS PERLA','GRIS PLATA',
+  'GRIS CEMENTO','GRIS TOPO','GRIS HIELO','GRIS OSCURO',
+  'MARRON ARRAYANES','MARRON CLARO','MARRON OSCURO',
+  'ROJO CERAMICO','ROJO TEJA','ROJO VINO','ROJO CORAL','ROJO OXIDO',
+  'ROBLE CLARO','ROBLE OSCURO',
+  'ROSA BEBE','ROSA VIEJO',
+  'VIOLETA PASTEL',
+  'ALUMINIO 201',
+  'NEGRO','BLANCO','ROJO','AZUL','CELESTE','VERDE','AMARILLO','NARANJA','GRIS',
+  'BEIGE','CREMA','MARRON','CAOBA','CRISTAL','NATURAL','NOGAL','ROBLE',
+  'CEDRO','TECA','HAYA','HABANO','CHOCOLATE','DAMASCO','CEMENTO','BORDEAUX',
+  'ALUMINIO','PLATA','BERMELLON','CALIPSO','ESMERALDA','CASTAÑO','LILA',
+  'MAGENTA','OCRE','INCOLORA','TRANSPARENTE','TABACO','PERLA','WENGUE',
+  'VIRARO','ALGARROBO','COBRE','LAVANDA','MAIZ','MOSTAZA','SALMON','TURQUESA',
+  'VIOLETA','BORDO','TERRACOTA','CORAL','ARENA','TIERRA','ROSA','FUCSIA',
+  'PETROLEO','MENTA','MANDARINA','DORADO','BRONCE','MARFIL','PIZARRA','PIEDRA',
+  'CARAMELO','MIEL','VAINILLA','VINO','OLIVA','LIMA','HUESO','CRUDO',
+  'ANTRACITA','TOSTADO','SIENA','MARINO','ORO',
+  'PETERIBI','PELTRE','TRIGO','SEQUOIA','MANZANA','CARMIN','ZAPOTE','MUSGO',
+  'COLORES','VARIOS','SURTIDOS',
+].sort((a, b) => b.length - a.length);
+
+// RegExps precompiladas para performance
+const _COLOR_REGEXES_STRIP = TODOS_LOS_COLORES.map(c => ({
+  c,
+  re: new RegExp('\\b' + c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi'),
+}));
+
+const _MARCA_REGEXES = MARCAS_EN_NOMBRE.map(m => ({
+  m,
+  re: new RegExp('\\b' + m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i'),
+}));
+
+const SIZE_RE = /(\d+(?:[.,]\d+)?)\s*(ML|L|LTS|LITROS|KG|G|CM|MM)?\s*$/i;
+const COLOR_CODE_RE = /\s+\d{2,3}(?=\s+\d|\s*$)/g; // "53" en "ABRO AMARILLO 53"
+
+/* ══════════════════════════════════════════════════════════════
+   HELPERS INTERNOS
+══════════════════════════════════════════════════════════════ */
+
+function _stripColores(text) {
+  for (const { re } of _COLOR_REGEXES_STRIP) {
+    re.lastIndex = 0;
+    text = text.replace(re, '');
+  }
+  return text.replace(/\s+/g, ' ').trim();
+}
+
+function _findMarcaEnNombre(g) {
+  for (const { m, re } of _MARCA_REGEXES) {
+    re.lastIndex = 0;
+    const match = re.exec(g);
+    if (match) return { marca: m, start: match.index, end: match.index + match[0].length };
+  }
+  return null;
+}
+
+function _normalizeSize(num, unit) {
+  const u = (unit || '').toUpperCase();
+  if (u.startsWith('L')) return num + 'L';
+  if (u === 'ML') return num + 'ML';
+  return num; // cm, número puro (lija, espátula)
+}
+
+/* ══════════════════════════════════════════════════════════════
+   extraerGrupoBase — ALGORITMO INTELIGENTE v2
+══════════════════════════════════════════════════════════════ */
 export function extraerGrupoBase(nombre) {
   let g = nombre.trim().toUpperCase();
 
-  g = g.replace(/(\d+(?:[.,]\d+)?)\s*(ML|L|LTS|LITROS|KG|G|CM|MM)?\s*$/gi, (match, num, unit) => {
-    let u = (unit || '').toUpperCase();
-    if (u.startsWith('L')) return num + 'L';
-    if (u === 'ML') return num + 'ML';
-    return match;
-  });
+  // 1. Extraer y normalizar tamaño del final
+  let sizeStr = '';
+  const sizeMatch = SIZE_RE.exec(g);
+  if (sizeMatch) {
+    sizeStr = _normalizeSize(sizeMatch[1], sizeMatch[2]);
+    g = g.slice(0, sizeMatch.index).trim();
+  }
 
-  const tamMatch = g.match(/\s+(\d+(?:[.,]\d+)?(?:ML|L|KG|G)?)\s*$/i);
-  const sufijo = tamMatch ? tamMatch[0] : '';
-  const sinTam = tamMatch ? g.slice(0, -sufijo.length).trim() : g;
+  // 2. Remover códigos de color numéricos
+  g = g.replace(COLOR_CODE_RE, '').trim();
 
-  const marca = detectarMarca(sinTam);
-  let marcaPosEnd = -1;
-  if (marca && marca !== 'Otras') {
-    for (const mb of MARCAS_MULTI) {
-      const mp = mb.toUpperCase().split(/[\s-]+/);
-      const palabras = sinTam.split(/\s+/);
-      for (let off = 0; off <= palabras.length - mp.length; off++) {
-        if (palabras.slice(off, off + mp.length).join(' ') === mp.join(' ')) {
-          marcaPosEnd = sinTam.indexOf(palabras[off]) + palabras.slice(off, off + mp.length).join(' ').length;
-          break;
-        }
+  // 3. Buscar marca en el nombre
+  const brandResult = _findMarcaEnNombre(g);
+
+  let result;
+  if (brandResult) {
+    const { marca, start: bStart, end: bEnd } = brandResult;
+    const relPos = bStart / Math.max(g.length, 1);
+
+    if (relPos > 0.45) {
+      const prefix = g.slice(0, bStart).trim();
+      const prefixClean = _stripColores(prefix);
+      const prefixWords = prefixClean.split(/\s+/).filter(w => w.length >= 2);
+      result = (prefixWords.join(' ') + ' ' + marca).trim();
+    } else {
+      const afterBrand = g.slice(bEnd).trim();
+      const afterWords = afterBrand.split(/\s+/);
+      const structural = [];
+      for (const w of afterWords) {
+        if (TYPE_TOKENS.has(w.toUpperCase())) structural.push(w);
+        else break;
       }
-      if (marcaPosEnd > -1) break;
+      result = g.slice(0, bEnd).trim();
+      if (structural.length) result += ' ' + structural.join(' ');
     }
-    if (marcaPosEnd === -1) {
-      const palabras = sinTam.split(/\s+/);
-      for (let i = 0; i < palabras.length; i++) {
-        if (MARCAS_SET.has(palabras[i]) && !PALABRAS_GENERICAS.has(palabras[i])) {
-          marcaPosEnd = sinTam.indexOf(palabras[i]) + palabras[i].length;
-          break;
-        }
-      }
+  } else {
+    const catInf = inferirCategoria(g);
+    if (catInf.cat === 'pinturas') {
+      result = _stripColores(g);
+      ['BRILLANTE','MATE','SATINADO','MADERA','MADERS','PREMIUM','PRO'].forEach(d => {
+        result = result.replace(new RegExp('\\b' + d + '\\b', 'gi'), '');
+      });
+      result = result.replace(/\s+/g, ' ').trim();
+    } else {
+      result = g;
     }
   }
 
-  if (marcaPosEnd > 0) {
-    const parteBase = sinTam.substring(0, marcaPosEnd).trim();
-    // Incluir lo que viene DESPUÉS de la marca pero antes del tamaño,
-    // salvo descriptores de acabado y colores (ej: "RAPIFIX UV" → UV se preserva)
-    let restoTrasM = sinTam.substring(marcaPosEnd).trim();
-    const STRIP_TRAS_MARCA = ['BRILLANTE', 'MATE', 'SATINADO', 'MADERA', 'MADERS', 'COLORES', 'VARIOS', 'PREMIUM', 'PRO'];
-    for (const d of STRIP_TRAS_MARCA) {
-      restoTrasM = restoTrasM.replace(new RegExp('\\b' + d + '\\b', 'gi'), '').replace(/\s+/g, ' ').trim();
-    }
-    // Strip colors del resto
-    const colorKeysSorted = Object.keys(COLOR_HEX_MAP).sort((a, b) => b.length - a.length);
-    for (const k of colorKeysSorted) {
-      const regex = new RegExp('\\b' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi');
-      if (regex.test(restoTrasM)) {
-        restoTrasM = restoTrasM.replace(regex, '').replace(/\s+/g, ' ').trim();
-        break;
-      }
-    }
-    const baseCompleta = (parteBase + (restoTrasM ? ' ' + restoTrasM : '')).trim();
-    return (baseCompleta + sufijo).replace(/\s+/g, ' ').trim() || nombre;
-  }
+  // 4. Reincorporar tamaño normalizado
+  if (sizeStr) result = result.trim() + ' ' + sizeStr;
 
-  // Para accesorios y herramientas el color ES parte de la identidad del producto
-  // (ej: "Cinta Verde" ≠ "Cinta Azul"). Solo stripear para pinturas.
-  const catInferida = inferirCategoria(g);
-  const esPintura = catInferida.cat === 'pinturas';
-
-  if (esPintura) {
-    const colorKeys = Object.keys(COLOR_HEX_MAP).sort((a, b) => b.length - a.length);
-    for (const k of colorKeys) {
-      const regex = new RegExp('\\b' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi');
-      if (regex.test(g)) {
-        g = g.replace(regex, '').replace(/\s+/g, ' ').trim();
-        break;
-      }
-    }
-
-    const descriptores = ['BRILLANTE', 'MATE', 'SATINADO', 'MADERA', 'MADERS', 'COLORES', 'VARIOS', 'PREMIUM', 'PRO'];
-    for (const d of descriptores) {
-      g = g.replace(new RegExp('\\b' + d + '\\b', 'gi'), '').replace(/\s+/g, ' ').trim();
-    }
-  }
-
-  return g.trim() || nombre;
+  return result.replace(/\s+/g, ' ').trim() || nombre;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   extraerVariante
+══════════════════════════════════════════════════════════════ */
 export function extraerVariante(nombreCompleto, nombreBase) {
   const colorDet = detectarColor(nombreCompleto);
 
@@ -105,91 +201,55 @@ export function extraerVariante(nombreCompleto, nombreBase) {
   const tamMatch = nombreCompleto.match(/(\d+(?:[.,]\d+)?)\s*(ML|L|LTS|LITROS|KG|G|CM|MM)?\s*$/i);
   let sizeLabel = '';
   if (tamMatch) {
-    const num = tamMatch[1];
+    const num  = tamMatch[1];
     const unit = (tamMatch[2] || '').toUpperCase();
-    if (unit.startsWith('L')) sizeLabel = num + ' L';
-    else if (unit === 'ML') sizeLabel = num + ' ml';
-    else if (unit) sizeLabel = num + ' ' + unit.toLowerCase();
+    if (unit.startsWith('L'))  sizeLabel = num + ' L';
+    else if (unit === 'ML')    sizeLabel = num + ' ml';
+    else if (unit)             sizeLabel = num + ' ' + unit.toLowerCase();
   }
 
   if (colorDet) {
     let label = colorDet.label.charAt(0) + colorDet.label.slice(1).toLowerCase();
-    if (acabadoEncontrado && !label.toLowerCase().includes(acabadoEncontrado)) {
+    if (acabadoEncontrado && !label.toLowerCase().includes(acabadoEncontrado))
       label += ' ' + acabadoEncontrado;
-    }
     return { label, hex: colorDet.hex, tipo: 'color' };
   }
 
-  if (sizeLabel) {
-    return { label: sizeLabel, hex: null, tipo: 'tamaño' };
-  }
+  if (sizeLabel) return { label: sizeLabel, hex: null, tipo: 'tamaño' };
 
   const fullUp = nombreCompleto.trim().toUpperCase();
   const baseUp = nombreBase.trim().toUpperCase();
   if (fullUp !== baseUp) {
     if (fullUp.startsWith(baseUp)) {
       const diff = nombreCompleto.trim().substring(baseUp.length).trim();
-      if (diff.length > 0 && diff.length < 50) {
-        const label = diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase();
-        return { label, hex: null, tipo: 'color' };
-      }
+      if (diff.length > 0 && diff.length < 50)
+        return { label: diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase(), hex: null, tipo: 'color' };
     }
     const baseWords = new Set(baseUp.split(/\s+/));
-    const fullWords = fullUp.split(/\s+/);
-    const diffWords = fullWords.filter(w => !baseWords.has(w));
+    const diffWords = fullUp.split(/\s+/).filter(w => !baseWords.has(w));
     if (diffWords.length > 0 && diffWords.length < 6) {
       const diff = diffWords.join(' ');
-      const label = diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase();
-      return { label, hex: null, tipo: 'color' };
+      return { label: diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase(), hex: null, tipo: 'color' };
     }
   }
 
   return { label: '', hex: null, tipo: 'unico' };
 }
 
-export async function obtenerProductosDesdeDB() {
-  const { data, error } = await supabase
-    .from('productos')
-    .select('*')
-
-  if (error) {
-    console.error('Error cargando Supabase:', error)
-    return []
-  }
-
-  // Adaptar estructura a lo que espera tu sistema
-  return data.map(p => ({
-    id: p.id,
-    nombre: p.nombre,
-    codigo: p.codigo,
-    precio: Number(p.precio_lista) || 0,
-    stock: p.stock || 0,
-    marcaSheet: p.marca || ''
-  }))
-}
-
-export async function obtenerCatalogoProcesado() {
-  const productosRaw = await obtenerProductosDesdeDB()
-
-  if (!productosRaw.length) return []
-
-  const catalogo = agruparProductos(productosRaw)
-
-  return catalogo
-}
-
+/* ══════════════════════════════════════════════════════════════
+   agruparProductos — usa grupo_base y variante precalculados en DB
+══════════════════════════════════════════════════════════════ */
 export function agruparProductos(rawProductos) {
   const grupos = new Map();
 
   for (const p of rawProductos) {
-    const base = extraerGrupoBase(p.nombre);
+    const base = (p.grupoBase && p.grupoBase.trim()) || extraerGrupoBase(p.nombre);
     if (!grupos.has(base)) grupos.set(base, []);
     grupos.get(base).push(p);
   }
 
   let idCounter = 1;
   const catalogoFinal = [];
-
   let minGlobal = Infinity;
   let maxGlobal = -Infinity;
 
@@ -198,102 +258,104 @@ export function agruparProductos(rawProductos) {
     const variantesMap = new Map();
 
     for (const f of filas) {
-      const v = extraerVariante(f.nombre, nombreBase);
-      const key = v.label ? v.label.toUpperCase() : f.nombre.toUpperCase();
+      const varLabel = (f.variante && f.variante.trim()) || '';
+      const key = varLabel ? varLabel.toUpperCase() : f.nombre.toUpperCase();
+
+      const colorDet = detectarColor(varLabel || f.nombre);
+      const hex      = colorDet?.hex || CAT_COLOR[catInfo.cat] || '#1e6fd9';
+      const tipo     = colorDet ? 'color' : (varLabel ? 'tamaño' : 'unico');
+      const labelDisplay = varLabel
+        ? varLabel.charAt(0).toUpperCase() + varLabel.slice(1).toLowerCase()
+        : '';
 
       const existente = variantesMap.get(key);
-      const mejorQueExistente = !existente ||
-                                (f.precio > 0 && existente.precio === 0) ||
-                                (f.stock > 0 && existente.stock <= 0);
+      const mejor     = !existente
+        || (f.precio > 0 && existente.precio === 0)
+        || (f.stock  > 0 && existente.stock  <= 0);
 
-      if (mejorQueExistente) {
+      if (mejor) {
         variantesMap.set(key, {
-          label: v.label,
-          hex: v.hex || CAT_COLOR[catInfo.cat] || '#1e6fd9',
-          precio: f.precio,
-          stock: f.stock,
-          tipo: v.tipo,
-          codigo: f.codigo,
-          nombreCompleto: f.nombre
+          label:          labelDisplay,
+          hex,
+          precio:         f.precio,
+          precio2:        f.precio2 || 0,
+          stock:          f.stock,
+          tipo,
+          codigo:         f.codigo,
+          imagenes_url:   f.imagenes_url || null,
+          nombreCompleto: f.nombre,
         });
       }
     }
 
     const variantes = Array.from(variantesMap.values()).sort((a, b) => {
       if ((a.precio > 0) !== (b.precio > 0)) return b.precio - a.precio;
-      if ((a.stock > 0) !== (b.stock > 0)) return b.stock - a.stock;
+      if ((a.stock  > 0) !== (b.stock  > 0)) return b.stock  - a.stock;
       const aB = a.label.toUpperCase().includes('BLANCO');
       const bB = b.label.toUpperCase().includes('BLANCO');
       if (aB && !bB) return -1;
-      if (!aB && bB) return 1;
+      if (!aB && bB) return  1;
       return a.label.localeCompare(b.label);
     });
 
-    if (variantes.length === 0) return;
+    if (!variantes.length) return;
 
     const preciosValidos = variantes.map(v => v.precio).filter(p => p >= 10);
-    const preciosTodos = variantes.map(v => v.precio);
-
+    const preciosTodos  = variantes.map(v => v.precio);
     const pMin = preciosValidos.length ? Math.min(...preciosValidos) : 0;
     const pMax = preciosValidos.length ? Math.max(...preciosValidos) : 0;
 
     if (preciosTodos.length) {
-      const pMinTodos = Math.min(...preciosTodos);
-      const pMaxTodos = Math.max(...preciosTodos);
-      if (pMinTodos < minGlobal) minGlobal = pMinTodos;
-      if (pMaxTodos > maxGlobal) maxGlobal = pMaxTodos;
+      const lo = Math.min(...preciosTodos), hi = Math.max(...preciosTodos);
+      if (lo < minGlobal) minGlobal = lo;
+      if (hi > maxGlobal) maxGlobal = hi;
     }
 
-    const hayStock = variantes.some(v => v.stock > 0);
+    const hayStock    = variantes.some(v => v.stock > 0);
     const varPrincipal = variantes[0];
 
-    const marcaSheet = filas.find(f => f.marcaSheet)?.marcaSheet || '';
-    const marcaDelNombre = detectarMarca(nombreBase);
-    // Normalizar marcaSheet vía MARCA_ALIAS para evitar duplicados (ej: "Colorin" vs "Colorín")
+    const marcaSheet    = filas.find(f => f.marcaSheet)?.marcaSheet || '';
     const marcaSheetNorm = marcaSheet
       ? (MARCA_ALIAS[marcaSheet.trim().toUpperCase()] || marcaSheet)
       : null;
     const marcaDetectada = marcaSheetNorm || detectarMarca(nombreBase) || 'Otras';
+
+    const imagenGrupo = varPrincipal?.imagenes_url
+      || filas.map(f => f.imagenes_url).find(u => u && u !== 'NO_IMAGEN')
+      || null;
+
     catalogoFinal.push({
-      id: idCounter++,
-      nombre: nombreBase,
-      categoria: catInfo.cat,
+      id:           idCounter++,
+      nombre:       nombreBase,
+      imagen:       imagenGrupo,
+      categoria:    catInfo.cat,
       subcategoria: catInfo.sub,
-      uso: catInfo.uso,
-      acabado: catInfo.acabado,
-      propiedades: catInfo.props,
-      precio: varPrincipal.precio,
-      precioMin: pMin,
-      precioMax: pMax,
-      tieneRango: pMax > pMin * 1.05 && pMin > 0,
-      stock: hayStock,
-      badge: hayStock ? (varPrincipal.stock > 50 ? '⭐ Más vendido' : '✅ En stock') : null,
-      variantes: variantes,
+      uso:          catInfo.uso,
+      acabado:      catInfo.acabado,
+      propiedades:  catInfo.props,
+      precio:       varPrincipal.precio,
+      precioMin:    pMin,
+      precioMax:    pMax,
+      tieneRango:   pMax > pMin * 1.05 && pMin > 0,
+      stock:        hayStock,
+      badge:        hayStock ? (varPrincipal.stock > 50 ? '⭐ Más vendido' : '✅ En stock') : null,
+      variantes,
       tipoVariante: variantes.some(v => v.tipo === 'color') ? 'color' : 'otro',
-      marca: marcaDetectada || 'Otras',
-      _searchStr: normalizar(`${nombreBase} ${variantes.map(v => v.label).join(' ')} ${marcaDetectada || ''}`)
+      marca:        marcaDetectada || 'Otras',
+      _searchStr:   normalizar(`${nombreBase} ${variantes.map(v => v.label).join(' ')} ${marcaDetectada || ''}`),
     });
   });
 
-  // Importar dinámicamente para evitar circular dependency al setear
+  // Actualizar rangos de precio globales
   const sheetsModule = import('./sheets.js');
-  if (minGlobal !== Infinity) {
-    estado.precioMin = Math.floor(minGlobal / 100) * 100;
-  } else {
-    estado.precioMin = 0;
-  }
-  if (maxGlobal !== -Infinity) {
-    estado.precioMax = Math.ceil(maxGlobal / 100) * 100;
-  } else {
-    estado.precioMax = 1000000;
-  }
-
-  // Guardar en módulo sheets via setter
+  estado.precioMin = minGlobal !== Infinity  ? Math.floor(minGlobal / 100) * 100 : 0;
+  estado.precioMax = maxGlobal !== -Infinity ? Math.ceil (maxGlobal / 100) * 100 : 1000000;
   sheetsModule.then(m => {
     m.actualizarPrecioMin(estado.precioMin);
     m.actualizarPrecioMax(estado.precioMax);
   });
 
+  // Ordenar: stock primero, luego intercalar por marca (variedad visual)
   catalogoFinal.sort((a, b) => (b.stock ? 1 : 0) - (a.stock ? 1 : 0));
 
   const porMarca = new Map();
@@ -302,17 +364,14 @@ export function agruparProductos(rawProductos) {
     if (!porMarca.has(m)) porMarca.set(m, []);
     porMarca.get(m).push(p);
   }
+
   const marcasOrdenadas = [...porMarca.entries()].sort((a, b) => b[1].length - a[1].length);
   const resultado = [];
-  let quedan = true;
-  let ronda = 0;
+  let quedan = true, ronda = 0;
   while (quedan) {
     quedan = false;
     for (const [, prods] of marcasOrdenadas) {
-      if (ronda < prods.length) {
-        resultado.push(prods[ronda]);
-        quedan = true;
-      }
+      if (ronda < prods.length) { resultado.push(prods[ronda]); quedan = true; }
     }
     ronda++;
   }

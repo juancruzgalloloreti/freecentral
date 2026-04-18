@@ -59,11 +59,8 @@ export function htmlTarjetaProducto(producto, indice) {
   let precioHtml = '';
   if (precioEsConsulta) {
     precioHtml = `<div class="producto-precio" id="precio-${producto.id}">Consultar</div>`;
-  } else if (producto.tieneRango && !tieneSeleccion) {
-    const badgeEst = producto._tieneEstimados ? `<span class="precio-estimado-badge" title="Precio estimado por IA para 2026">≈ est.</span>` : '';
-    precioHtml = `<div class="producto-precio" id="precio-${producto.id}"><small>Desde</small> $${formatearPrecio(producto.precioMin)}${badgeEst}</div>`;
   } else {
-    const esEst = varActiva?._estimado;
+    const esEst    = varActiva?._estimado;
     const badgeEst = esEst ? `<span class="precio-estimado-badge" title="Precio estimado por IA para 2026">≈ est.</span>` : '';
     precioHtml = `<div class="producto-precio" id="precio-${producto.id}">$${formatearPrecio(precioActivo)}${badgeEst}</div>`;
   }
@@ -77,8 +74,16 @@ export function htmlTarjetaProducto(producto, indice) {
   const btnTitle = precioEsConsulta ? 'Consultar por WhatsApp' : `Agregar ${producto.nombre} al carrito`;
   const btnDisabled = !precioEsConsulta && !varConStock;
 
+  // Imagen: mostrar si existe, skeleton si no tiene aún
+  const imgHtml = producto.imagen && producto.imagen !== 'NO_IMAGEN'
+    ? `<div class="producto-imagen">
+         <img src="${producto.imagen}" alt="${producto.nombre}" loading="lazy" onerror="this.closest('.producto-imagen').classList.add('sin-foto')">
+       </div>`
+    : `<div class="producto-imagen sin-foto"></div>`;
+
   return `
     <div class="tarjeta-producto" data-pid="${producto.id}" style="--cat-color:${catColor};animation-delay:${delay}s">
+      ${imgHtml}
       <div class="producto-info">
         ${badgeHtml}${sinStockHtml}
         <h3 class="producto-nombre" title="${producto.nombre}">${nombreHtml}</h3>
@@ -93,7 +98,7 @@ export function htmlTarjetaProducto(producto, indice) {
     </div>`;
 }
 
-export function renderizarGrilla(productosFiltrados) {
+export function renderizarGrilla(productosFiltrados, soloAgregar = false) {
   const grilla   = document.getElementById('grillaProductos');
   const vacio    = document.getElementById('estadoVacio');
   const btnMas   = document.getElementById('btnCargarMas');
@@ -101,7 +106,7 @@ export function renderizarGrilla(productosFiltrados) {
 
   const total = productosFiltrados.length;
   const cant  = Math.min(estado.productosVisibles, total);
-  const pagina   = productosFiltrados.slice(0, cant);
+  const pagina = productosFiltrados.slice(0, cant);
 
   contador.innerHTML = `Mostrando <strong>${cant}</strong> de <strong>${total}</strong> productos`;
 
@@ -113,7 +118,20 @@ export function renderizarGrilla(productosFiltrados) {
   }
 
   vacio.classList.remove('visible');
-  grilla.innerHTML = pagina.map((p, i) => htmlTarjetaProducto(p, i)).join('');
+
+  if (soloAgregar) {
+    // Solo agrega las tarjetas nuevas, sin mover el scroll
+    const yaRenderizados = grilla.querySelectorAll('.tarjeta-producto').length;
+    const nuevas = pagina.slice(yaRenderizados);
+    nuevas.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.innerHTML = htmlTarjetaProducto(p, yaRenderizados + i);
+      grilla.appendChild(div.firstElementChild);
+    });
+  } else {
+    // Render completo (filtros, búsqueda, carga inicial)
+    grilla.innerHTML = pagina.map((p, i) => htmlTarjetaProducto(p, i)).join('');
+  }
 
   if (total > cant) {
     btnMas.classList.remove('oculto');

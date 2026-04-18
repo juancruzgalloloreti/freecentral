@@ -223,8 +223,8 @@ window.limpiarTodosFiltros = function() {
 // Paginación
 window.cargarMas = function() {
   estado.productosVisibles += PRODUCTOS_POR_PAGINA;
-  renderizarGrilla(filtrarProductos(CATALOGO, estado));
-  document.getElementById('btnCargarMas')?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  renderizarGrilla(filtrarProductos(CATALOGO, estado), true); // 👈 true = modo append
+  // 👇 Eliminá la línea del scrollIntoView, era la que tiraba el scroll para abajo
 };
  
 // Menú mobile

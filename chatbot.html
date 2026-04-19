@@ -8,501 +8,201 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --azul-oscuro:  #07091d;
-      --azul-medio:   #0d1a52;
-      --azul-fuerte:  #0044ff;
-      --violeta:      #9900ee;
-      --degradado:    linear-gradient(135deg, #0044ff 0%, #9900ee 100%);
-      --azul-claro:   #4da3ff;
-      --azul-suave:   #f0f4ff;
-      --blanco:       #f0f4ff;
-      --gris:         #8fa8c8;
-      --amarillo:     #ffcd3c;
-      --verde-wa:     #25d366;
-      --rojo-error:   #e53e3e;
-      --espacio-abajo:  env(safe-area-inset-bottom, 0px);
-      --transicion: 0.2s ease;
-    }
-
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: #edf2f7; color: var(--azul-oscuro); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
-
-    /* Nav - Sincronizado con el resto del sitio */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      background: rgba(7, 9, 29, 0.97); backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 4%; height: 60px; border-bottom: 1px solid rgba(77, 163, 255, 0.15);
-    }
-
-    .logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.7rem; color: var(--blanco);
-      letter-spacing: 2px; text-decoration: none;
-      display: flex; align-items: center;
-    }
-    .logo img { height: 40px; width: auto; object-fit: contain; }
-
-    .nav-links { list-style: none; display: none; }
-    .nav-links li { margin: 0 1rem; }
-    .nav-links a { color: var(--gris); text-decoration: none; font-size: 0.85rem; font-weight: 500; text-transform: uppercase; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--blanco); }
-    .nav-links a.activo { color: var(--blanco); font-weight: 700; }
-
-    .nav-acciones { display: flex; align-items: center; gap: 0.5rem; }
-    .btn-carrito-nav {
-      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 50%; width: 40px; height: 40px; color: white; cursor: pointer;
-      position: relative; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-    }
-    .badge-carrito {
-      position: absolute; top: -5px; right: -5px; background: var(--amarillo);
-      color: var(--azul-oscuro); font-size: 0.7rem; font-weight: 700;
-      width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    }
-
-    .btn-menu-mobile {
-      background: none; border: none; cursor: pointer; color: var(--blanco); font-size: 1.5rem;
-      min-width: 48px; min-height: 48px; display: flex; align-items: center; justify-content: center;
-    }
-
-    /* Menú mobile */
-    .menu-mobile {
-      position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
-      background: rgba(7,9,29,0.99); z-index: 99;
-      display: flex; flex-direction: column; padding: 1rem 5%;
-      transform: translateX(-100%); transition: transform 0.3s ease;
-      overflow-y: auto;
-    }
-    .menu-mobile a {
-      color: var(--gris); text-decoration: none; font-size: 1.1rem; font-weight: 500;
-      padding: 1rem 0; min-height: 48px; display: flex; align-items: center;
-      border-bottom: 1px solid rgba(77,163,255,0.1);
-    }
-    .menu-mobile.abierto { transform: translateX(0); }
-
-    /* Main Content */
-    .wrapper { flex: 1; display: flex; flex-direction: column; padding-top: 60px; }
-
-    /* Chat Container */
-    .chat-section {
-      flex: 1; display: flex; flex-direction: column; align-items: center;
-      background: linear-gradient(155deg, #07091d 0%, #0c0535 45%, #130050 65%, #07091d 100%);
-      position: relative; overflow: hidden; padding-bottom: 2rem;
-    }
-
-    .blobs { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-    .blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.2; animation: flotar 8s ease-in-out infinite; }
-    .blob-1 { width: 400px; height: 400px; background: var(--azul-fuerte); top: -100px; right: -150px; }
-    .blob-2 { width: 300px; height: 300px; background: var(--violeta); bottom: 10%; left: -100px; animation-delay: 3s; }
-
-    @keyframes flotar { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.05); } }
-
-    .app-chat {
-      width: 92%; max-width: 600px; height: calc(100vh - 120px);
-      background: rgba(13, 26, 82, 0.4); backdrop-filter: blur(20px);
-      border: 1px solid rgba(77, 163, 255, 0.15); border-radius: 24px;
-      margin: 1.5rem auto; display: flex; flex-direction: column; overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 10;
-    }
-
-    .chat-header {
-      padding: 1.2rem 1.5rem; background: rgba(7, 9, 29, 0.5);
-      border-bottom: 1px solid rgba(77, 163, 255, 0.1);
-      display: flex; align-items: center; justify-content: space-between;
-      flex-shrink: 0;
-    }
-    .bot-info { display: flex; align-items: center; gap: 12px; }
-    .bot-avatar {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: var(--degradado); display: flex; align-items: center; justify-content: center;
-      color: white; font-weight: 700; font-size: 1.1rem;
-    }
-    .bot-status { display: flex; flex-direction: column; }
-    .bot-name { color: white; font-weight: 600; font-size: 0.95rem; }
-    .status-online { color: var(--verde-wa); font-size: 0.75rem; display: flex; align-items: center; gap: 4px; }
-    .status-online::before { content: ''; width: 6px; height: 6px; background: currentColor; border-radius: 50%; }
-
-    /* Botón inicio en header */
-    .btn-inicio-header {
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(77,163,255,0.2);
-      border-radius: 10px; padding: 6px 14px; color: var(--gris); font-size: 0.8rem;
-      cursor: pointer; font-family: inherit; transition: all 0.2s; display: none;
-    }
-    .btn-inicio-header:hover { background: rgba(77,163,255,0.15); color: white; }
-    .btn-inicio-header.visible { display: block; }
-
-    .messages {
-      flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;
-      scrollbar-width: thin; scrollbar-color: var(--azul-claro) transparent;
-    }
-    .messages::-webkit-scrollbar { width: 5px; }
-    .messages::-webkit-scrollbar-thumb { background: var(--azul-claro); border-radius: 10px; }
-
-    /* Welcome & Quick Actions */
-    .welcome { text-align: center; color: var(--blanco); padding: 1.5rem 0.5rem; animation: fadeUp 0.5s ease; }
-    .welcome h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; margin-bottom: 0.5rem; letter-spacing: 1px; }
-    .welcome p { color: var(--gris); font-size: 0.9rem; margin-bottom: 1.5rem; }
-
-    /* Grid de consultas táctiles */
-    .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .quick-btn {
-      background: rgba(255,255,255,0.06); border: 1px solid rgba(77,163,255,0.25);
-      border-radius: 16px; padding: 1.1rem 0.8rem; color: white; text-align: left; cursor: pointer;
-      transition: all 0.18s; font-family: inherit; min-height: 72px;
-      display: flex; flex-direction: column; gap: 4px;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-    .quick-btn:active { transform: scale(0.96); background: rgba(77,163,255,0.2); border-color: var(--azul-claro); }
-    .quick-btn strong { display: block; font-size: 0.9rem; color: var(--azul-claro); }
-    .quick-btn span { font-size: 0.75rem; color: var(--gris); }
-
-    /* Bubbles */
-    .msg { display: flex; max-width: 92%; animation: fadeUp 0.3s ease; }
-    .msg-bot { align-self: flex-start; }
-    .msg-user { align-self: flex-end; }
-
-    .bubble {
-      padding: 0.85rem 1.1rem; border-radius: 18px; font-size: 0.92rem; line-height: 1.55;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-    .bubble-bot {
-      background: rgba(13, 26, 82, 0.85); color: var(--blanco);
-      border: 1px solid rgba(77, 163, 255, 0.2); border-bottom-left-radius: 4px;
-    }
-    .bubble-user {
-      background: var(--degradado); color: white; border-bottom-right-radius: 4px;
-      font-size: 0.88rem;
-    }
-
-    .bubble-bot b { color: var(--amarillo); }
-
-    /* Cards de marcas */
-    .marcas-grid {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
-    }
-    .marca-pill {
-      background: rgba(77,163,255,0.12); border: 1px solid rgba(77,163,255,0.3);
-      border-radius: 20px; padding: 6px 14px; font-size: 0.82rem; color: var(--blanco);
-      white-space: nowrap; cursor: pointer; transition: all 0.18s;
-      user-select: none; -webkit-tap-highlight-color: transparent;
-      text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
-    }
-    .marca-pill:active { background: rgba(77,163,255,0.3); transform: scale(0.96); }
-    .marca-pill.propia {
-      background: rgba(255,205,60,0.15); border-color: var(--amarillo); color: var(--amarillo);
-    }
-    .marca-pill .mp-dot {
-      width: 7px; height: 7px; border-radius: 50%; background: var(--azul-claro); flex-shrink: 0;
-    }
-    .marca-pill.propia .mp-dot { background: var(--amarillo); }
-    .marcas-ver-catalogo {
-      margin-top: 10px; display: block; color: var(--amarillo); font-size: 0.82rem; text-decoration: none;
-    }
-
-    /* Separador con menú looping */
-    .loop-menu-wrap {
-      animation: fadeUp 0.35s ease;
-    }
-    .loop-sep {
-      text-align: center; color: var(--gris); font-size: 0.78rem; margin: 4px 0 10px 0;
-      position: relative;
-    }
-    .loop-sep::before, .loop-sep::after {
-      content: ''; position: absolute; top: 50%; width: 28%; height: 1px;
-      background: rgba(77,163,255,0.2);
-    }
-    .loop-sep::before { left: 0; }
-    .loop-sep::after { right: 0; }
-
-    /* Typing indicator */
-    .typing-indicator { display: flex; gap: 4px; padding: 0.8rem 1.1rem; }
-    .typing-indicator span {
-      width: 8px; height: 8px; border-radius: 50%; background: var(--gris);
-      animation: typingBounce 1.4s infinite ease-in-out;
-    }
-    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
-
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* Footer */
-    footer {
-      background: var(--azul-oscuro); padding: 3rem 4% calc(1.5rem + var(--espacio-abajo)); color: var(--gris); text-align: center; border-top: 1px solid rgba(77, 163, 255, 0.12);
-    }
-    .footer-desc { font-size: 0.82rem; margin-bottom: 1rem; }
-    .footer-copy { border-top: 1px solid rgba(77, 163, 255, 0.1); padding-top: 1rem; font-size: 0.75rem; }
-
-    @media (min-width: 768px) {
-      .nav-links { display: flex; }
-      .btn-menu-mobile { display: none; }
-      .app-chat { height: 750px; margin: 3rem auto; }
-    }
-  </style>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/chatbot.css">
 </head>
 <body>
 
 <nav>
-    <a href="chatbot.html" class="logo logo-img"><img src="freecolors-logo.png" alt="Freecolors Pinturerias" class="logo-imagen"></a>
-    <ul class="nav-links">
-      <li><a href="index.html">Inicio</a></li>
-      <li><a href="catalogo.html">Catálogo</a></li>
-      <li><a href="chatbot.html" class="activo">Logo</a></li>
-      <li><a href="contacto.html">Contacto</a></li>
-    </ul>
-    <div class="nav-acciones">
-      <button class="btn-menu-mobile" onclick="toggleMenu()">☰</button>
+  <a href="chatbot.html" class="logo logo-img"><img src="freecolors-logo.png" alt="Freecolors Pinturerias" class="logo-imagen"></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="catalogo.html">Catálogo</a></li>
+    <li><a href="chatbot.html" class="activo">Logo</a></li>
+    <li><a href="contacto.html">Contacto</a></li>
+  </ul>
+  <div class="nav-acciones">
+    <button class="btn-menu-mobile" onclick="toggleMenu()">☰</button>
+  </div>
+</nav>
+
+<div class="menu-mobile" id="menuMobile">
+  <a href="index.html">🏠 Inicio</a>
+  <a href="catalogo.html">📖 Catálogo</a>
+  <a href="chatbot.html">💬 Logo</a>
+  <a href="contacto.html">📞 Contacto</a>
+</div>
+
+<div class="wrapper">
+  <section class="chat-section">
+    <div class="blobs">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
     </div>
-  </nav>
-
-  <div class="menu-mobile" id="menuMobile">
-    <a href="index.html">🏠 Inicio</a>
-    <a href="catalogo.html">📖 Catálogo</a>
-    <a href="chatbot.html">💬 Logo</a>
-    <a href="contacto.html">📞 Contacto</a>
-  </div>
-
-  <div class="wrapper">
-    <section class="chat-section">
-      <div class="blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-      </div>
-
-      <div class="app-chat">
-        <div class="chat-header">
-          <div class="bot-info">
-            <div class="bot-avatar">L</div>
-            <div class="bot-status">
-              <span class="bot-name">Asistente Logo</span>
-              <span class="status-online">En línea</span>
-            </div>
+    <div class="app-chat">
+      <div class="chat-header">
+        <div class="bot-info">
+          <div class="bot-avatar">L</div>
+          <div class="bot-status">
+            <span class="bot-name">Asistente Logo</span>
+            <span class="status-online">En línea</span>
           </div>
-          <button class="btn-inicio-header" id="btnInicio" onclick="resetChat()">🏠 Inicio</button>
         </div>
-
-        <div class="messages" id="messages">
-          <!-- Welcome pantalla inicial -->
-          <div class="welcome" id="welcome">
-            <h2>HOLA, SOY LOGO 🎨</h2>
-            <p>Tu asistente experto en Freecolors.<br>¿En qué puedo ayudarte hoy?</p>
-            <div class="quick-grid" id="welcomeGrid">
-              <button class="quick-btn" onclick="quickAsk('envios')">
-                <strong>🚚 Envíos</strong>
-                <span>Zonas y tiempos</span>
-              </button>
-              <button class="quick-btn" onclick="quickAsk('horarios')">
-                <strong>🕐 Horarios</strong>
-                <span>Atención al público</span>
-              </button>
-              <button class="quick-btn" onclick="quickAsk('pagos')">
-                <strong>💳 Pagos</strong>
-                <span>Medios de pago</span>
-              </button>
-              <button class="quick-btn" onclick="quickAsk('marcas')">
-                <strong>🏷️ Marcas</strong>
-                <span>Marcas disponibles</span>
-              </button>
-              <button class="quick-btn" onclick="quickAsk('ubicacion')">
-                <strong>📍 Ubicación</strong>
-                <span>Dirección y mapa</span>
-              </button>
-              <button class="quick-btn" onclick="quickAsk('contacto')">
-                <strong>📞 Contacto</strong>
-                <span>WhatsApp y teléfono</span>
-              </button>
-            </div>
+        <button class="btn-inicio-header" id="btnInicio" onclick="resetChat()">🏠 Inicio</button>
+      </div>
+      <div class="messages" id="messages">
+        <div class="welcome" id="welcome">
+          <h2>HOLA, SOY LOGO 🎨</h2>
+          <p>Tu asistente experto en Freecolors.<br>¿En qué puedo ayudarte hoy?</p>
+          <div class="quick-grid" id="welcomeGrid">
+            <button class="quick-btn" onclick="quickAsk('envios')"><strong>🚚 Envíos</strong><span>Zonas y tiempos</span></button>
+            <button class="quick-btn" onclick="quickAsk('horarios')"><strong>🕐 Horarios</strong><span>Atención al público</span></button>
+            <button class="quick-btn" onclick="quickAsk('pagos')"><strong>💳 Pagos</strong><span>Medios de pago</span></button>
+            <button class="quick-btn" onclick="quickAsk('marcas')"><strong>🏷️ Marcas</strong><span>Marcas disponibles</span></button>
+            <button class="quick-btn" onclick="quickAsk('ubicacion')"><strong>📍 Ubicación</strong><span>Dirección y mapa</span></button>
+            <button class="quick-btn" onclick="quickAsk('contacto')"><strong>📞 Contacto</strong><span>WhatsApp y teléfono</span></button>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <footer>
-      <p class="footer-desc">Pinturería Freecolors · Calidad accesible desde 2003.</p>
-      <div class="footer-copy">© 2026 Freecolors Pinturerías · Buenos Aires, Argentina</div>
-    </footer>
-  </div>
+  <footer>
+    <p class="footer-desc">Pinturería Freecolors · Calidad accesible desde 2003.</p>
+    <div class="footer-copy">© 2026 Freecolors Pinturerías · Buenos Aires, Argentina</div>
+  </footer>
+</div>
 
+<script src="js/menu.js"></script>
 <script>
-  'use strict';
+'use strict';
 
-  var messagesDiv = document.getElementById('messages');
-  var btnInicio = document.getElementById('btnInicio');
+var messagesDiv = document.getElementById('messages');
+var btnInicio   = document.getElementById('btnInicio');
 
-  // Mapa de tecla → etiqueta bonita para la burbuja usuario
-  var LABELS = {
-    envios:    '🚚 ¿Hacen envíos?',
-    horarios:  '🕐 ¿Cuáles son los horarios?',
-    pagos:     '💳 ¿Qué medios de pago aceptan?',
-    marcas:    '🏷️ ¿Qué marcas tienen?',
-    ubicacion: '📍 ¿Dónde están ubicados?',
-    contacto:  '📞 ¿Cómo me comunico?',
-  };
+var LABELS = {
+  envios:    '🚚 ¿Hacen envíos?',
+  horarios:  '🕐 ¿Cuáles son los horarios?',
+  pagos:     '💳 ¿Qué medios de pago aceptan?',
+  marcas:    '🏷️ ¿Qué marcas tienen?',
+  ubicacion: '📍 ¿Dónde están ubicados?',
+  contacto:  '📞 ¿Cómo me comunico?',
+};
 
-  function getResponse(key) {
-    switch (key) {
-      case 'envios':
-        return '🚚 <b>Envíos:</b><br>• Hacemos envíos (se arregla via Whatsapp)<br>• Compras mayores a <b>$50.000</b> <br>• También podés retirar en sucursal';
-
-      case 'horarios':
-        return '🕐 <b>Horarios de atención:</b><br>• Lunes a Viernes: 8:30 a 13:00 y 15:00 a 18:30<br>• Sábados: 8:30 a 13:00<br>• Domingos y feriados: Cerrado';
-
-      case 'pagos':
-        return '💳 <b>Medios de pago:</b><br>• Efectivo<br>• Tarjeta de débito y crédito<br>• Mercado Pago';
-
-      case 'marcas':
-        return buildMarcasHTML();
-
-      case 'ubicacion':
-        return '📍 Estamos en <b>Av. Rivadavia 22606, Ituzaingó, Buenos Aires</b>. Podés ver el mapa en nuestra <a href="contacto.html" style="color:var(--amarillo)">página de contacto</a>.';
-
-      case 'contacto':
-        return '📞 <b>Contactanos:</b><br>• <a href="https://wa.me/5491131332405" style="color:#25d366" target="_blank">WhatsApp: +54 9 11 3133-2405</a><br>• También podés ver dirección y mapa en nuestra <a href="contacto.html" style="color:var(--amarillo)">página de contacto</a>';
-
-      default:
-        return '🎨 No entendí tu consulta. Tocá una de las opciones del menú.';
-    }
+function getResponse(key) {
+  switch (key) {
+    case 'envios':    return '🚚 <b>Envíos:</b><br>• Hacemos envíos (se arregla via Whatsapp)<br>• Compras mayores a <b>$50.000</b> <br>• También podés retirar en sucursal';
+    case 'horarios':  return '🕐 <b>Horarios de atención:</b><br>• Lunes a Viernes: 8:30 a 13:00 y 15:00 a 18:30<br>• Sábados: 8:30 a 13:00<br>• Domingos y feriados: Cerrado';
+    case 'pagos':     return '💳 <b>Medios de pago:</b><br>• Efectivo<br>• Tarjeta de débito y crédito<br>• Mercado Pago';
+    case 'marcas':    return buildMarcasHTML();
+    case 'ubicacion': return '📍 Estamos en <b>Av. Rivadavia 22606, Ituzaingó, Buenos Aires</b>. Podés ver el mapa en nuestra <a href="contacto.html" style="color:var(--amarillo)">página de contacto</a>.';
+    case 'contacto':  return '📞 <b>Contactanos:</b><br>• <a href="https://wa.me/5491131332405" style="color:#25d366" target="_blank">WhatsApp: +54 9 11 3133-2405</a><br>• También podés ver dirección y mapa en nuestra <a href="contacto.html" style="color:var(--amarillo)">página de contacto</a>';
+    default: return '🎨 No entendí tu consulta. Tocá una de las opciones del menú.';
   }
+}
 
-  function buildMarcasHTML() {
-    var marcas = [
-      { nombre: 'Freecolors', propia: true, emoji: '⭐' },
-      { nombre: 'Sherwin Williams', propia: false, emoji: '🏠' },
-      { nombre: 'Alba', propia: false, emoji: '🎨' },
-      { nombre: 'Colorin', propia: false, emoji: '🖌️' },
-      { nombre: 'Tersuave', propia: false, emoji: '✨' },
-      { nombre: 'Sanyo Jafep', propia: false, emoji: '❄️' },
-      { nombre: 'El Galgo', propia: false, emoji: '🐾' },
-      { nombre: 'Distinción', propia: false, emoji: '💎' },
-      { nombre: 'Duracril', propia: false, emoji: '💪' },
-    ];
+function buildMarcasHTML() {
+  var marcas = [
+    { nombre: 'Freecolors', propia: true, emoji: '⭐' },
+    { nombre: 'Sherwin Williams', propia: false, emoji: '🏠' },
+    { nombre: 'Alba', propia: false, emoji: '🎨' },
+    { nombre: 'Colorin', propia: false, emoji: '🖌️' },
+    { nombre: 'Tersuave', propia: false, emoji: '✨' },
+    { nombre: 'Sanyo Jafep', propia: false, emoji: '❄️' },
+    { nombre: 'El Galgo', propia: false, emoji: '🐾' },
+    { nombre: 'Distinción', propia: false, emoji: '💎' },
+    { nombre: 'Duracril', propia: false, emoji: '💪' },
+  ];
+  var html = '🏷️ <b>Marcas disponibles:</b><br><small style="color:var(--gris)">Tocá una marca para buscarla en el catálogo</small>';
+  html += '<div class="marcas-grid">';
+  marcas.forEach(function(m) {
+    var cls = m.propia ? 'marca-pill propia' : 'marca-pill';
+    html += '<a href="catalogo.html" class="' + cls + '"><span class="mp-dot"></span>' + m.emoji + ' ' + m.nombre + (m.propia ? ' ★' : '') + '</a>';
+  });
+  html += '</div><a href="catalogo.html" class="marcas-ver-catalogo">→ Ver catálogo completo</a>';
+  return html;
+}
 
-    var html = '🏷️ <b>Marcas disponibles:</b><br><small style="color:var(--gris)">Tocá una marca para buscarla en el catálogo</small>';
-    html += '<div class="marcas-grid">';
+function quickAsk(key) {
+  var welcome = document.getElementById('welcome');
+  if (welcome) welcome.style.display = 'none';
+  addMessage('user', LABELS[key] || key);
+  btnInicio.classList.add('visible');
+  showTyping();
+  setTimeout(function() {
+    hideTyping();
+    addMessage('bot', getResponse(key));
+    setTimeout(showLoopMenu, 350);
+  }, 400 + Math.random() * 400);
+}
 
-    marcas.forEach(function(m) {
-      var cls = m.propia ? 'marca-pill propia' : 'marca-pill';
-      var href = 'catalogo.html';
-      html += '<a href="' + href + '" class="' + cls + '"><span class="mp-dot"></span>' + m.emoji + ' ' + m.nombre + (m.propia ? ' ★' : '') + '</a>';
-    });
+function showLoopMenu() {
+  var wrap = document.createElement('div');
+  wrap.className = 'loop-menu-wrap';
+  var sep = document.createElement('div');
+  sep.className = 'loop-sep';
+  sep.textContent = '¿Querés saber algo más?';
+  var grid = document.createElement('div');
+  grid.className = 'quick-grid';
+  var opciones = [
+    { key: 'envios',    icon: '🚚', label: 'Envíos',    sub: 'Zonas y tiempos' },
+    { key: 'horarios',  icon: '🕐', label: 'Horarios',  sub: 'Atención al público' },
+    { key: 'pagos',     icon: '💳', label: 'Pagos',     sub: 'Medios de pago' },
+    { key: 'marcas',    icon: '🏷️', label: 'Marcas',    sub: 'Marcas disponibles' },
+    { key: 'ubicacion', icon: '📍', label: 'Ubicación', sub: 'Dirección y mapa' },
+    { key: 'contacto',  icon: '📞', label: 'Contacto',  sub: 'WhatsApp y teléfono' },
+  ];
+  opciones.forEach(function(op) {
+    var btn = document.createElement('button');
+    btn.className = 'quick-btn';
+    btn.innerHTML = '<strong>' + op.icon + ' ' + op.label + '</strong><span>' + op.sub + '</span>';
+    btn.onclick = function() { if (wrap.parentNode) wrap.parentNode.removeChild(wrap); quickAsk(op.key); };
+    grid.appendChild(btn);
+  });
+  wrap.appendChild(sep);
+  wrap.appendChild(grid);
+  messagesDiv.appendChild(wrap);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
 
-    html += '</div>';
-    html += '<a href="catalogo.html" class="marcas-ver-catalogo">→ Ver catálogo completo</a>';
-    return html;
-  }
+function resetChat() {
+  messagesDiv.innerHTML = '';
+  btnInicio.classList.remove('visible');
+  var welcome = document.createElement('div');
+  welcome.className = 'welcome';
+  welcome.id = 'welcome';
+  welcome.innerHTML = '<h2>HOLA, SOY LOGO 🎨</h2><p>Tu asistente experto en Freecolors.<br>¿En qué puedo ayudarte hoy?</p><div class="quick-grid"><button class="quick-btn" onclick="quickAsk(\'envios\')"><strong>🚚 Envíos</strong><span>Zonas y tiempos</span></button><button class="quick-btn" onclick="quickAsk(\'horarios\')"><strong>🕐 Horarios</strong><span>Atención al público</span></button><button class="quick-btn" onclick="quickAsk(\'pagos\')"><strong>💳 Pagos</strong><span>Medios de pago</span></button><button class="quick-btn" onclick="quickAsk(\'marcas\')"><strong>🏷️ Marcas</strong><span>Marcas disponibles</span></button><button class="quick-btn" onclick="quickAsk(\'ubicacion\')"><strong>📍 Ubicación</strong><span>Dirección y mapa</span></button><button class="quick-btn" onclick="quickAsk(\'contacto\')"><strong>📞 Contacto</strong><span>WhatsApp y teléfono</span></button></div>';
+  messagesDiv.appendChild(welcome);
+  messagesDiv.scrollTop = 0;
+}
 
-  function quickAsk(key) {
-    var welcome = document.getElementById('welcome');
-    if (welcome) welcome.style.display = 'none';
+function addMessage(role, text) {
+  var msgDiv = document.createElement('div');
+  msgDiv.className = 'msg msg-' + role;
+  var bubble = document.createElement('div');
+  bubble.className = 'bubble bubble-' + role;
+  bubble.innerHTML = text;
+  msgDiv.appendChild(bubble);
+  messagesDiv.appendChild(msgDiv);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
 
-    // Mostrar burbuja de usuario
-    addMessage('user', LABELS[key] || key);
+function showTyping() {
+  var msgDiv = document.createElement('div');
+  msgDiv.className = 'msg msg-bot';
+  msgDiv.id = 'typing-msg';
+  var bubble = document.createElement('div');
+  bubble.className = 'bubble bubble-bot typing-indicator';
+  bubble.innerHTML = '<span></span><span></span><span></span>';
+  msgDiv.appendChild(bubble);
+  messagesDiv.appendChild(msgDiv);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
 
-    // Mostrar botón inicio
-    btnInicio.classList.add('visible');
-
-    showTyping();
-    var delay = 400 + Math.random() * 400;
-    setTimeout(function() {
-      hideTyping();
-      addMessage('bot', getResponse(key));
-      // Después de responder, mostrar menú de loop
-      setTimeout(showLoopMenu, 350);
-    }, delay);
-  }
-
-  function showLoopMenu() {
-    var wrap = document.createElement('div');
-    wrap.className = 'loop-menu-wrap';
-
-    var sep = document.createElement('div');
-    sep.className = 'loop-sep';
-    sep.textContent = '¿Querés saber algo más?';
-
-    var grid = document.createElement('div');
-    grid.className = 'quick-grid';
-
-    var opciones = [
-      { key: 'envios',    icon: '🚚', label: 'Envíos',    sub: 'Zonas y tiempos' },
-      { key: 'horarios',  icon: '🕐', label: 'Horarios',  sub: 'Atención al público' },
-      { key: 'pagos',     icon: '💳', label: 'Pagos',     sub: 'Medios de pago' },
-      { key: 'marcas',    icon: '🏷️', label: 'Marcas',    sub: 'Marcas disponibles' },
-      { key: 'ubicacion', icon: '📍', label: 'Ubicación', sub: 'Dirección y mapa' },
-      { key: 'contacto',  icon: '📞', label: 'Contacto',  sub: 'WhatsApp y teléfono' },
-    ];
-
-    opciones.forEach(function(op) {
-      var btn = document.createElement('button');
-      btn.className = 'quick-btn';
-      btn.innerHTML = '<strong>' + op.icon + ' ' + op.label + '</strong><span>' + op.sub + '</span>';
-      btn.onclick = function() {
-        // Eliminar este menú de loop antes de responder
-        if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
-        quickAsk(op.key);
-      };
-      grid.appendChild(btn);
-    });
-
-    wrap.appendChild(sep);
-    wrap.appendChild(grid);
-    messagesDiv.appendChild(wrap);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }
-
-  function resetChat() {
-    // Limpiar chat y volver al inicio
-    messagesDiv.innerHTML = '';
-    btnInicio.classList.remove('visible');
-
-    var welcome = document.createElement('div');
-    welcome.className = 'welcome';
-    welcome.id = 'welcome';
-    welcome.innerHTML = '<h2>HOLA, SOY LOGO 🎨</h2><p>Tu asistente experto en Freecolors.<br>¿En qué puedo ayudarte hoy?</p><div class="quick-grid"><button class="quick-btn" onclick="quickAsk(\'envios\')"><strong>🚚 Envíos</strong><span>Zonas y tiempos</span></button><button class="quick-btn" onclick="quickAsk(\'horarios\')"><strong>🕐 Horarios</strong><span>Atención al público</span></button><button class="quick-btn" onclick="quickAsk(\'pagos\')"><strong>💳 Pagos</strong><span>Medios de pago</span></button><button class="quick-btn" onclick="quickAsk(\'marcas\')"><strong>🏷️ Marcas</strong><span>Marcas disponibles</span></button><button class="quick-btn" onclick="quickAsk(\'ubicacion\')"><strong>📍 Ubicación</strong><span>Dirección y mapa</span></button><button class="quick-btn" onclick="quickAsk(\'contacto\')"><strong>📞 Contacto</strong><span>WhatsApp y teléfono</span></button></div>';
-
-    messagesDiv.appendChild(welcome);
-    messagesDiv.scrollTop = 0;
-  }
-
-  function addMessage(role, text) {
-    var msgDiv = document.createElement('div');
-    msgDiv.className = 'msg msg-' + role;
-
-    var bubble = document.createElement('div');
-    bubble.className = 'bubble bubble-' + role;
-    bubble.innerHTML = text;
-
-    msgDiv.appendChild(bubble);
-    messagesDiv.appendChild(msgDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }
-
-  function showTyping() {
-    var msgDiv = document.createElement('div');
-    msgDiv.className = 'msg msg-bot';
-    msgDiv.id = 'typing-msg';
-    var bubble = document.createElement('div');
-    bubble.className = 'bubble bubble-bot typing-indicator';
-    bubble.innerHTML = '<span></span><span></span><span></span>';
-    msgDiv.appendChild(bubble);
-    messagesDiv.appendChild(msgDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }
-
-  function hideTyping() {
-    var el = document.getElementById('typing-msg');
-    if (el) el.remove();
-  }
-
-  function toggleMenu() {
-    document.getElementById('menuMobile').classList.toggle('abierto');
-  }
+function hideTyping() {
+  var el = document.getElementById('typing-msg');
+  if (el) el.remove();
+}
 </script>
 </body>
 </html>

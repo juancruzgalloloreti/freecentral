@@ -1,434 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
-<!--
-╔══════════════════════════════════════════════════════════════╗
-║  FREECOLORS — PÁGINA DE INICIO  v4.0  (producción)           ║
-╠══════════════════════════════════════════════════════════════╣
-║  CAMBIOS v4.0 vs v3.0:                                       ║
-║  • Paleta rediseñada para coincidir con el logo oficial:     ║
-║    fondo #07091d (casi negro-azul), azul eléctrico #0044ff,  ║
-║    violeta vibrante #9900ee                                  ║
-║  • Hero: gradiente diagonal 155° + rayos -45° superpuestos   ║
-║    simulan las franjas de luz del logo                       ║
-║  • Footer: micro-gradiente radial azul/violeta en esquinas   ║
-║  • Blobs más grandes (360px) y más opacos (0.35)             ║
-║  • Shadow de botones y cards ajustado a la nueva paleta      ║
-║  • Código organizado y comentado (sin cambios funcionales)   ║
-╚══════════════════════════════════════════════════════════════╝
--->
 <head>
   <meta charset="UTF-8">
-  <!--
-    viewport: le dice al celular cómo mostrar la página.
-    - width=device-width  → usar el ancho real del celular
-    - initial-scale=1.0   → sin zoom al abrir
-    - viewport-fit=cover  → cubrir el notch en iPhones
-  -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <!-- Color de la barra del sistema en Android — coincide con el fondo del logo -->
   <meta name="theme-color" content="#07091d">
   <title>Freecolors</title>
-  <meta name="description" content="Freecolors Pinturerías - Venta de pinturas y accesorios desde 2003. Envíos a domicilio en Buenos Aires. Asesoramiento personalizado por WhatsApp. Calidad garantizada.">
-  <!-- Bebas Neue para títulos, DM Sans para textos corridos -->
+  <meta name="description" content="Freecolors Pinturerías - Venta de pinturas y accesorios desde 2003. Envíos a domicilio en Buenos Aires.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <style>
-
-    /* ═══════════════════════════════════════════════
-       1. VARIABLES GLOBALES
-       ── Cambiás un color acá y se aplica en todo el archivo.
-       ── Uso: color: var(--azul-fuerte);
-    ═══════════════════════════════════════════════ */
-    :root {
-      /*
-        PALETA — inspirada en el logo Freecolors.
-        Fondo oscuro casi negro-azul, acento azul eléctrico y violeta vibrante.
-        Para ajustar todo el sitio, editá solo este bloque.
-      */
-      --azul-oscuro:  #07091d;  /* fondo principal, nav, footer          */
-      --azul-medio:   #0d1a52;  /* barra de estadísticas                 */
-      --azul-fuerte:  #0044ff;  /* acentos primarios (azul eléctrico)    */
-      --violeta:      #9900ee;  /* acentos secundarios (violeta vibrante)*/
-      --degradado:    linear-gradient(135deg, #0044ff 0%, #9900ee 100%);
-      --azul-claro:   #4da3ff;  /* hover, badges                         */
-      --azul-suave:   #f0f4ff;  /* fondos muy claros                     */
-      --blanco:       #f0f4ff;  /* fondo del body                        */
-      --gris:         #8fa8c8;  /* textos secundarios                    */
-      --amarillo:     #ffcd3c;  /* badge "Más vendido", FAB carrito      */
-      --rojo-error:   #e53e3e;  /* mensajes de error en formularios      */
-      --verde-wa:     #25d366;  /* botón WhatsApp                        */
-
-      /* safe-area: espacio reservado por el sistema en iPhones con notch */
-      --espacio-abajo:  env(safe-area-inset-bottom, 0px);
-      --espacio-arriba: env(safe-area-inset-top,    0px);
-
-      --transicion: 0.2s ease;
-    }
-
-
-    /* ═══════════════════════════════════════════════
-       2. RESET BÁSICO
-       ── Quita márgenes y paddings que los navegadores
-          aplican por defecto, para partir de cero.
-    ═══════════════════════════════════════════════ */
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;          /* el padding queda adentro del elemento */
-      -webkit-tap-highlight-color: transparent; /* quita el flash azul al tocar en Android */
-      touch-action: manipulation;      /* elimina el delay de 300ms en mobile */
-    }
-
-    html { scroll-behavior: smooth; } /* scroll suave en links tipo href="#seccion" */
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: #edf2f7;
-      color: var(--azul-oscuro);
-      padding-bottom: 2rem;
-    }
-
-   /* overflow-x acá, no en body → no rompe position:sticky en iOS Safari */
-
-
-    /* ═══════════════════════════════════════════════
-       3. NAV
-       ── MOBILE FIRST: logo + carrito + hamburguesa.
-       ── Desktop: también muestra los links del medio.
-    ═══════════════════════════════════════════════ */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      background: rgba(7, 9, 29, 0.97);
-      backdrop-filter: blur(12px);          /* efecto vidrio esmerilado */
-      -webkit-backdrop-filter: blur(12px);  /* necesario en Safari */
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 4%;
-      height: 60px;
-      border-bottom: 1px solid rgba(77, 163, 255, 0.15);
-    }
-
-    .logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.7rem; color: var(--blanco);
-      letter-spacing: 2px; text-decoration: none;
-    }
-    .logo span { color: var(--azul-claro); } /* la parte "COLORS" en azul */
-
-    .nav-links { list-style: none; display: none; } /* visible solo en desktop */
-
-    .btn-menu-mobile {
-      background: none; border: none; cursor: pointer;
-      color: var(--blanco); font-size: 1.5rem;
-      min-width: 48px; min-height: 48px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 8px;
-    }
-
-
-    /* ═══════════════════════════════════════════════
-       4. MENÚ MOBILE
-       ── Se desliza desde la izquierda.
-       ── Clase .abierto lo trae a la vista.
-    ═══════════════════════════════════════════════ */
-    .menu-mobile {
-      position: fixed;
-      top: 60px; left: 0; right: 0; bottom: 0;
-      background: rgba(7,9,29,0.99); z-index: 99;
-      display: flex; flex-direction: column; padding: 1rem 5%;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      overflow-y: auto;
-    }
-
-    .menu-mobile a {
-      color: var(--gris); text-decoration: none;
-      font-size: 1.1rem; font-weight: 500;
-      padding: 1rem 0; min-height: 48px;
-      display: flex; align-items: center;
-      border-bottom: 1px solid rgba(77,163,255,0.1);
-    }
-    .menu-mobile a:last-child { border-bottom: none; }
-    .menu-mobile a:active { color: var(--azul-claro); }
-    .menu-mobile.abierto { transform: translateX(0); }
-
-
-    /* ═══════════════════════════════════════════════
-       6. HERO (sección de bienvenida)
-       ── Mobile: columna centrada.
-       ── Desktop: 2 columnas (texto + abanico de colores).
-       ── Fondo inspirado en el logo: oscuro con rayos diagonales azul/violeta.
-    ═══════════════════════════════════════════════ */
-    .hero {
-      min-height: 100vh;
-      background: linear-gradient(155deg, #07091d 0%, #0c0535 45%, #130050 65%, #07091d 100%);
-      display: flex; flex-direction: column; justify-content: center;
-      padding: 80px 5% 2rem;
-      position: relative; overflow: hidden;
-      text-align: center;
-    }
-
-    .hero::before {
-      content: ''; position: absolute; inset: 0;
-      background:
-              linear-gradient(-45deg, transparent 0%, rgba(0,68,255,0.07) 25%, rgba(153,0,238,0.10) 45%, rgba(0,68,255,0.05) 60%, transparent 75%),
-              radial-gradient(ellipse at 15% 25%, rgba(0,68,255,0.22) 0%, transparent 55%),
-              radial-gradient(ellipse at 85% 75%, rgba(153,0,238,0.22) 0%, transparent 55%);
-      pointer-events: none;
-    }
-
-    .blobs { position: absolute; inset: 0; overflow: hidden; }
-    .blob  { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.35; animation: flotar 8s ease-in-out infinite; }
-    .blob-1 { width: 360px; height: 360px; background: var(--azul-fuerte); top: -80px;  right: -100px; }
-    .blob-2 { width: 240px; height: 240px; background: var(--violeta);     bottom: 20%; left:  -70px;  animation-delay: 3s; }
-    .blob-3 { width: 180px; height: 180px; background: var(--degradado);   bottom: -40px; right: 10%; animation-delay: 5s; }
-
-    @keyframes flotar {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50%       { transform: translateY(-20px) scale(1.05); }
-    }
-
-    .hero-texto { position: relative; z-index: 5; max-width: 520px; margin: 0 auto; }
-
-    .hero-logo {
-      width: min(480px, 90%);
-      height: auto;
-      display: block;
-      margin: 0 auto 1.5rem;
-      animation: subirAparecer 0.6s 0.1s ease both;
-    }
-
-    .hero p {
-      color: var(--gris); font-size: 1.1rem; line-height: 1.6;
-      margin: 0 auto 2.5rem; max-width: 400px;
-      animation: subirAparecer 0.6s 0.2s ease both;
-    }
-
-    .hero-botones {
-      display: flex; flex-direction: column; gap: 1rem; align-items: center;
-      animation: subirAparecer 0.6s 0.3s ease both;
-    }
-
-    .btn-primario {
-      background: var(--degradado); color: #fff; border: none; cursor: pointer;
-      padding: 1.1rem 2.5rem; border-radius: 50px;
-      font-family: 'DM Sans', sans-serif; font-size: 1.1rem; font-weight: 700;
-      text-decoration: none; display: inline-block;
-      width: 100%; max-width: 280px; text-align: center; min-height: 56px;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 10px 30px rgba(0,68,255,0.4);
-    }
-    .btn-primario:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,68,255,0.5); }
-    .btn-primario:active { transform: scale(0.95); }
-
-    .btn-fantasma {
-      color: var(--blanco); font-size: 1rem; font-weight: 600;
-      text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;
-      min-height: 48px; padding: 0.5rem 1.5rem; border-radius: 50px;
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-      transition: all 0.2s;
-    }
-    .btn-fantasma:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
-
-/* ── ABANICO DE COLORES (REDISEÑO) ── */
-    .hero-visual {
-      position: relative;
-      margin-top: 3rem;
-      height: 200px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      perspective: 1000px;
-      z-index: 2;
-    }
-
-    .color-fan {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      height: 100%;
-      width: 100%;
-      max-width: 600px;
-      position: relative;
-    }
-
-    .fan-card {
-      width: 60px;
-      height: 160px;
-      border-radius: 12px;
-      position: absolute;
-      bottom: 0;
-      transform-origin: bottom center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      border: 2px solid rgba(255,255,255,0.1);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 10px;
-      color: white;
-      font-size: 0.6rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      overflow: hidden;
-      pointer-events: none; /* No interactuable */
-    }
-
-    .fan-card span {
-      display: none; /* Ocultar nombres */
-    }
-
-    /* Posiciones del abanico (se aplican vía CSS o JS, aquí CSS para velocidad) */
-    .fan-card:nth-child(1) { background: #1e3a8a; transform: rotate(-30deg) translateX(-120px); z-index: 1; }
-    .fan-card:nth-child(2) { background: #dc2626; transform: rotate(-20deg) translateX(-80px); z-index: 2; }
-    .fan-card:nth-child(3) { background: #0f766e; transform: rotate(-10deg) translateX(-40px); z-index: 3; }
-    .fan-card:nth-child(4) { background: #f59e0b; transform: rotate(0deg); z-index: 4; }
-    .fan-card:nth-child(5) { background: #7c3aed; transform: rotate(10deg) translateX(40px); z-index: 3; }
-    .fan-card:nth-child(6) { background: #ec4899; transform: rotate(20deg) translateX(80px); z-index: 2; }
-    .fan-card:nth-child(7) { background: #f5f5f5; color: #333; transform: rotate(30deg) translateX(120px); z-index: 1; }
-
-
-    /* ═══════════════════════════════════════════════
-       7. BARRA DE ESTADÍSTICAS
-       ── Banda oscura que separa el hero del contenido.
-    ═══════════════════════════════════════════════ */
-    .stats-bar {
-      background: var(--azul-medio);
-      border-top: 1px solid rgba(77,163,255,0.12);
-      border-bottom: 1px solid rgba(77,163,255,0.08);
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      text-align: center; padding: 1.25rem 4%;
-    }
-    .stat { padding: 0.75rem 0.5rem; }
-    .stat + .stat { border-left: 1px solid rgba(77,163,255,0.2); }
-    .stat-numero { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--violeta); display: block; }
-    .stat-texto  { color: var(--gris); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; line-height: 1.3; font-weight: 600; }
-
-
-    /* ═══════════════════════════════════════════════
-       8. SECCIONES (tipografía y padding)
-    ═══════════════════════════════════════════════ */
-    section { padding: 3rem 4%; }
-    .etiqueta-seccion { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; color: var(--azul-fuerte); margin-bottom: 0.6rem; }
-    .titulo-seccion   { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 8vw, 3rem); color: var(--azul-oscuro); line-height: 1; margin-bottom: 0.75rem; }
-
-
-    /* ═══════════════════════════════════════════════
-       9. BENEFICIOS (scroll horizontal táctil en mobile)
-    ═══════════════════════════════════════════════ */
-    .beneficios { background: #e8effc; }
-    .beneficios-scroll {
-      display: flex; gap: 1rem;
-      overflow-x: auto; -webkit-overflow-scrolling: touch;
-      padding-bottom: 0.5rem; scrollbar-width: none;
-      scroll-snap-type: x mandatory;
-    }
-    .beneficios-scroll::-webkit-scrollbar { display: none; }
-    .beneficio-tarjeta {
-      background: #fff; border-radius: 14px; padding: 1.5rem 1.25rem;
-      border-left: 4px solid var(--azul-fuerte);
-      box-shadow: 0 2px 12px rgba(0,68,255,0.08);
-      flex-shrink: 0; width: 240px; scroll-snap-align: start;
-    }
-    .beneficio-icono  { font-size: 1.8rem; margin-bottom: 0.75rem; }
-    .beneficio-tarjeta h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--azul-oscuro); }
-    .beneficio-tarjeta p  { font-size: 0.8rem; color: #4a6080; line-height: 1.6; }
-
-
-    /* ═══════════════════════════════════════════════
-       11. FOOTER
-    ═══════════════════════════════════════════════ */
-    footer {
-      background: var(--azul-oscuro);
-      padding: 2.5rem 4% calc(2.5rem + var(--espacio-abajo));
-      border-top: 1px solid rgba(77,163,255,0.12);
-      background-image:
-              radial-gradient(ellipse at 0% 0%, rgba(0,68,255,0.06) 0%, transparent 60%),
-              radial-gradient(ellipse at 100% 100%, rgba(153,0,238,0.06) 0%, transparent 60%);
-    }
-    .footer-logo      { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--blanco); display: block; margin-bottom: 0.75rem; text-decoration: none; }
-    .footer-logo span { color: var(--azul-claro); }
-    .footer-desc      { color: var(--gris); font-size: 0.82rem; line-height: 1.7; margin-bottom: 1.5rem; }
-    .footer-links     { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 2rem; }
-    .footer-links a   { color: var(--gris); text-decoration: none; font-size: 0.9rem; min-height: 48px; display: flex; align-items: center; border-bottom: 1px solid rgba(77,163,255,0.08); transition: color 0.2s; }
-    .footer-links a:last-child { border-bottom: none; }
-    .footer-links a:active { color: var(--azul-claro); }
-    .footer-copy { border-top: 1px solid rgba(77,163,255,0.1); padding-top: 1.25rem; color: var(--gris); font-size: 0.75rem; }
-
-
-    /* ═══════════════════════════════════════════════
-       10. ANIMACIONES
-    ═══════════════════════════════════════════════ */
-    @keyframes subirAparecer {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-
-    /* ═══════════════════════════════════════════════
-       16. DESKTOP (pantallas ≥ 768px)
-       ── Mobile first: acá sobreescribimos lo que cambia.
-    ═══════════════════════════════════════════════ */
-
-    /* Logo imagen — reemplaza el texto del nav por la imagen real del logo */
-    .logo-img { display: flex; align-items: center; }
-    .logo-imagen {
-      height: 40px;
-      width: auto;
-      object-fit: contain;
-      display: block;
-    }
-    .logo-footer { height: 52px; margin-bottom: 0.75rem; }
-
-    @media (min-width: 768px) {
-      body { padding-bottom: 0; } /* no hay FAB en desktop */
-      /* no necesario en desktop */
-
-      nav { height: 64px; padding: 0 5%; }
-      .logo-imagen { height: 46px; }
-      .logo { font-size: 1.9rem; }
-      .nav-links { display: flex; gap: 1.5rem; }
-      .nav-links a { color: var(--gris); text-decoration: none; font-size: 0.85rem; font-weight: 500; text-transform: uppercase; transition: color 0.2s; }
-      .nav-links a:hover { color: var(--blanco); }
-      .btn-menu-mobile { display: none; }
-
-
-      /* Hero en 2 columnas */
-      .hero { flex-direction: row; text-align: left; padding: 80px 5% 0; }
-      .hero-texto    { max-width: 50%; margin: 0; }
-      .hero-botones  { flex-direction: row; align-items: center; }
-      .btn-primario  { width: auto; }
-
-      .hero-visual {
-        display: flex; justify-content: center; align-items: center; flex: 1;
-        height: 400px; margin-top: 0;
-      }
-
-      .color-fan { max-width: 500px; }
-      .fan-card { width: 80px; height: 280px; }
-      .fan-card span { font-size: 0.8rem; }
-
-      .stats-bar { padding: 2rem 5%; }
-      .stat-numero { font-size: 2.5rem; }
-
-      section { padding: 5rem 5%; }
-
-      /* Beneficios: grilla en desktop */
-      .beneficios-scroll { flex-wrap: wrap; overflow: visible; }
-      .beneficio-tarjeta { width: auto; flex: 1; min-width: 200px; }
-
-      footer { padding: 3rem 5% 2rem; }
-    }
-
-  </style>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-
-  <!-- ══ NAV ══════════════════════════════════════ -->
   <nav>
     <a href="index.html" class="logo logo-img"><img src="freecolors-logo.png" alt="Freecolors Pinturerias" class="logo-imagen"></a>
     <ul class="nav-links">
@@ -442,34 +26,28 @@
     </div>
   </nav>
 
-  <!-- Menú mobile -->
   <div class="menu-mobile" id="menuMobile">
-    <a href="index.html" onclick="cerrarMenu()">🏠 Inicio</a>
+    <a href="index.html"    onclick="cerrarMenu()">🏠 Inicio</a>
     <a href="catalogo.html" onclick="cerrarMenu()">📖 Catálogo</a>
-    <a href="chatbot.html" onclick="cerrarMenu()">💬 Logo</a>
+    <a href="chatbot.html"  onclick="cerrarMenu()">💬 Logo</a>
     <a href="contacto.html" onclick="cerrarMenu()">📞 Contacto</a>
   </div>
 
-
-  <!-- ══ HERO ══════════════════════════════════════ -->
   <section class="hero" id="inicio">
     <div class="blobs">
       <div class="blob blob-1"></div>
       <div class="blob blob-2"></div>
       <div class="blob blob-3"></div>
     </div>
-
     <div class="hero-texto">
       <img src="freecolors-logo.png" alt="Freecolors Pinturerias" class="hero-logo">
       <p>Pinturas de calidad para cada rincón de tu hogar.</p>
       <div class="hero-botones">
         <a href="catalogo.html" class="btn-primario">Ver Catálogo</a>
-        <a href="chatbot.html" class="btn-fantasma">💬 Logo →</a>
+        <a href="chatbot.html"  class="btn-fantasma">💬 Logo →</a>
         <a href="contacto.html" class="btn-fantasma">📞 Contacto →</a>
       </div>
     </div>
-
-    <!-- Rediseño: Abanico de colores (funciona en mobile y desktop) -->
     <div class="hero-visual">
       <div class="color-fan">
         <div class="fan-card"><span>Azul Marino</span></div>
@@ -483,16 +61,12 @@
     </div>
   </section>
 
-
-  <!-- ══ ESTADÍSTICAS ══════════════════════════════ -->
-  <!-- Para cambiarlas: edita los textos acá abajo -->
   <div class="stats-bar">
     <div class="stat"><span class="stat-numero">200K+</span><span class="stat-texto">Colores</span></div>
     <div class="stat"><span class="stat-numero">150K+</span><span class="stat-texto">Clientes</span></div>
     <div class="stat"><span class="stat-numero">20+</span><span class="stat-texto">Años</span></div>
   </div>
 
-  <!-- ══ BENEFICIOS ════════════════════════════════ -->
   <section class="beneficios">
     <div class="etiqueta-seccion">Por qué elegirnos</div>
     <div class="titulo-seccion">NUESTROS SERVICIOS</div>
@@ -504,9 +78,6 @@
     </div>
   </section>
 
-
-  <!-- ══ FOOTER / CONTACTO ═════════════════════════ -->
-  <!-- Para cambiar el WhatsApp: editá el número en href="https://wa.me/..." -->
   <footer id="contacto">
     <a href="index.html" class="footer-logo logo-img"><img src="freecolors-logo.png" alt="Freecolors Pinturerías" class="logo-imagen logo-footer"></a>
     <p class="footer-desc">Pinturas de calidad accesible para cada hogar argentino. Más de 20 años coloreando hogares.</p>
@@ -514,24 +85,12 @@
       <a href="catalogo.html">📖 Ver catálogo completo</a>
       <a href="https://wa.me/5491131332405" target="_blank" rel="noopener">📱 WhatsApp</a>
       <a href="mailto:freecentral@hotmail.com" target="_blank" rel="noopener">📧 freecentral@hotmail.com</a>
-      <a href="https://www.google.com/maps/place/Pinturerias+Freecolors/@-34.6633302,-58.6810259,17z/data=!3m1!4b1!4m6!3m5!1s0x95bcc0a1ae6f3949:0x78ea2622861b12f3!8m2!3d-34.6633302!4d-58.678451!16s%2Fg%2F1q62g_hk0?entry=ttu&g_ep=EgoyMDI2MDQxNC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">📍 Av. Rivadavia 22606, Buenos Aires, Provincia de Buenos Aires</a>
+      <a href="https://www.google.com/maps/place/Pinturerias+Freecolors/@-34.6633302,-58.6810259,17z" target="_blank" rel="noopener">📍 Av. Rivadavia 22606, Buenos Aires</a>
       <a>🕐 Lun-Vie 8:30-13:00 y 15:00-18:30 | Sáb 8:30-13:00</a>
     </div>
     <div class="footer-copy">© 2026 Freecolors · Hecho en Argentina</div>
-    <div style="text-align:center;padding:2.5rem 0 0.5rem;opacity:0.10;pointer-events:none;user-select:none;">
-      <img id="logo-grande-footer" alt="" style="width:min(520px,88%);height:auto;display:block;margin:0 auto;" aria-hidden="true"
-           src="">
-    </div>
   </footer>
 
-<script>
-  'use strict';
-  function toggleMenu() {
-    document.getElementById('menuMobile').classList.toggle('abierto');
-  }
-  function cerrarMenu() {
-    document.getElementById('menuMobile').classList.remove('abierto');
-  }
-</script>
+  <script src="js/menu.js"></script>
 </body>
 </html>

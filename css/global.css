@@ -1,0 +1,204 @@
+/* ═══════════════════════════════════════════════
+   FREECOLORS — GLOBAL.CSS
+   Estilos compartidos por TODAS las páginas.
+   Nav, footer, variables, reset, blobs, menú mobile.
+═══════════════════════════════════════════════ */
+
+
+/* ── 1. VARIABLES ─────────────────────────────
+   Cambiás un color acá → se aplica en todo el sitio.
+────────────────────────────────────────────── */
+:root {
+  --azul-oscuro:  #07091d;
+  --azul-medio:   #0d1a52;
+  --azul-fuerte:  #0044ff;
+  --violeta:      #9900ee;
+  --degradado:    linear-gradient(135deg, #0044ff 0%, #9900ee 100%);
+  --azul-claro:   #4da3ff;
+  --azul-suave:   #f0f4ff;
+  --blanco:       #f0f4ff;
+  --gris:         #8fa8c8;
+  --amarillo:     #ffcd3c;
+  --rojo-error:   #e53e3e;
+  --verde-wa:     #25d366;
+  --espacio-abajo:  env(safe-area-inset-bottom, 0px);
+  --espacio-arriba: env(safe-area-inset-top,    0px);
+  --transicion: 0.2s ease;
+}
+
+
+/* ── 2. RESET ─────────────────────────────────
+   Quita márgenes/paddings por defecto del navegador.
+────────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #edf2f7;
+  color: var(--azul-oscuro);
+  overflow-x: hidden;
+}
+
+
+/* ── 3. NAV ───────────────────────────────────
+   Barra de navegación fija superior.
+   Mobile: logo + hamburguesa.
+   Desktop: logo + links.
+────────────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(7, 9, 29, 0.97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 4%;
+  height: 60px;
+  border-bottom: 1px solid rgba(77, 163, 255, 0.15);
+}
+
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.7rem;
+  color: var(--blanco);
+  letter-spacing: 2px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+.logo span { color: var(--azul-claro); }
+
+.logo-img { display: flex; align-items: center; text-decoration: none; }
+.logo-imagen { height: 40px; width: auto; object-fit: contain; display: block; }
+.logo-footer  { height: 52px; margin-bottom: 0.75rem; }
+
+.nav-links { list-style: none; display: none; }
+.nav-acciones { display: flex; align-items: center; gap: 0.5rem; }
+
+.btn-menu-mobile {
+  background: none; border: none; cursor: pointer;
+  color: var(--blanco); font-size: 1.5rem;
+  min-width: 48px; min-height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+}
+
+
+/* ── 4. MENÚ MOBILE ───────────────────────────
+   Se desliza desde la izquierda al abrir.
+   JS agrega la clase .abierto para mostrarlo.
+────────────────────────────────────────────── */
+.menu-mobile {
+  position: fixed;
+  top: 60px; left: 0; right: 0; bottom: 0;
+  background: rgba(7, 9, 29, 0.99);
+  z-index: 99;
+  display: flex; flex-direction: column;
+  padding: 1rem 5%;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+}
+
+.menu-mobile a {
+  color: var(--gris); text-decoration: none;
+  font-size: 1.1rem; font-weight: 500;
+  padding: 1rem 0; min-height: 48px;
+  display: flex; align-items: center;
+  border-bottom: 1px solid rgba(77, 163, 255, 0.1);
+}
+.menu-mobile a:last-child { border-bottom: none; }
+.menu-mobile a:active     { color: var(--azul-claro); }
+.menu-mobile.abierto      { transform: translateX(0); }
+
+
+/* ── 5. BLOBS ANIMADOS ────────────────────────
+   Círculos de color difusos para los fondos oscuros.
+   Cada página configura tamaños/posiciones si necesita.
+────────────────────────────────────────────── */
+.blobs { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.blob  {
+  position: absolute; border-radius: 50%;
+  filter: blur(70px); opacity: 0.35;
+  animation: flotar 8s ease-in-out infinite;
+}
+.blob-1 { width: 360px; height: 360px; background: var(--azul-fuerte); top: -80px;  right: -100px; }
+.blob-2 { width: 240px; height: 240px; background: var(--violeta);     bottom: 20%; left: -70px;  animation-delay: 3s; }
+.blob-3 { width: 180px; height: 180px; background: var(--degradado);   bottom: -40px; right: 10%; animation-delay: 5s; }
+
+@keyframes flotar {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-20px) scale(1.05); }
+}
+
+@keyframes subirAparecer {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ── 6. FOOTER ────────────────────────────────
+   Pie de página compartido por todas las páginas.
+────────────────────────────────────────────── */
+footer {
+  background: var(--azul-oscuro);
+  padding: 2.5rem 4% calc(2.5rem + var(--espacio-abajo));
+  border-top: 1px solid rgba(77, 163, 255, 0.12);
+  background-image:
+    radial-gradient(ellipse at 0% 0%,   rgba(0, 68, 255, 0.06)  0%, transparent 60%),
+    radial-gradient(ellipse at 100% 100%, rgba(153, 0, 238, 0.06) 0%, transparent 60%);
+}
+
+.footer-logo  {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem; color: var(--blanco);
+  display: block; margin-bottom: 0.75rem; text-decoration: none;
+}
+.footer-logo span { color: var(--azul-claro); }
+.footer-desc  { color: var(--gris); font-size: 0.82rem; line-height: 1.7; margin-bottom: 1.5rem; }
+.footer-links { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 2rem; }
+.footer-links a {
+  color: var(--gris); text-decoration: none; font-size: 0.9rem;
+  min-height: 48px; display: flex; align-items: center;
+  border-bottom: 1px solid rgba(77, 163, 255, 0.08);
+  transition: color 0.2s;
+}
+.footer-links a:last-child { border-bottom: none; }
+.footer-links a:active     { color: var(--azul-claro); }
+.footer-copy {
+  border-top: 1px solid rgba(77, 163, 255, 0.1);
+  padding-top: 1.25rem;
+  color: var(--gris); font-size: 0.75rem;
+}
+
+
+/* ── 7. DESKTOP (≥ 768px) ─────────────────────
+   Cambios de nav que aplican a todas las páginas.
+────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  nav           { height: 64px; padding: 0 5%; }
+  .logo-imagen  { height: 46px; }
+  .logo         { font-size: 1.9rem; }
+
+  .nav-links    { display: flex; gap: 1.5rem; }
+  .nav-links a  {
+    color: var(--gris); text-decoration: none;
+    font-size: 0.85rem; font-weight: 500;
+    text-transform: uppercase; transition: color 0.2s;
+  }
+  .nav-links a:hover  { color: var(--blanco); }
+  .nav-links a.activo { color: var(--blanco); font-weight: 700; }
+
+  .btn-menu-mobile { display: none; }
+
+  footer { padding: 3rem 5% 2rem; }
+}

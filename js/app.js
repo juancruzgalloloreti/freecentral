@@ -281,8 +281,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   cargarCarrito();
   actualizarUICarrito();
  
-  renderizarBarraCategorias();
- 
   const ok = await cargarDesdeSheets();
  
   document.getElementById('estadoCargaGrilla').style.display = 'none';

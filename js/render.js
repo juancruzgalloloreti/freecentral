@@ -414,6 +414,9 @@ export function renderizarPanelFiltros() {
     if (sc) sc.innerHTML = html;
     if (dc) dc.innerHTML = '';
   }
+  // FIX: race condition filtros — agregar clase de estado al finalizar render
+  const sidebarDesktop = document.getElementById('sidebarDesktop');
+  if (sidebarDesktop) sidebarDesktop.classList.add('filtros-listos');
 }
 
 export function renderizarDrawerFiltrosPreservandoEstado() {

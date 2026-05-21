@@ -142,7 +142,8 @@ window.onSliderPrecioInput = function(e) {
  
   let vMin = parseInt(sMin.value);
   let vMax = parseInt(sMax.value);
-  const gap = 1000;
+  const rangoTotal = _precioMax - _precioMin;
+  const gap = Math.max(100, Math.round(rangoTotal * 0.01)); // FIX: gap dinámico (1% del rango, mínimo $100)
  
   if (e.target.id === 'sliderMin') {
     if (vMin > vMax - gap) { vMin = vMax - gap; sMin.value = vMin; }
@@ -227,9 +228,7 @@ window.cargarMas = function() {
   // 👇 Eliminá la línea del scrollIntoView, era la que tiraba el scroll para abajo
 };
  
-// Menú mobile
-window.toggleMenuMobile = function() { document.getElementById('menuMobile').classList.toggle('abierto'); };
-window.cerrarMenuMobile = function() { document.getElementById('menuMobile').classList.remove('abierto'); };
+// Menú mobile manejado globalmente por menu.js
  
 // Drawer filtros
 window.abrirDrawerFiltros = function() {
@@ -292,7 +291,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (ok) {
     const sub = document.getElementById('headerSubtitulo');
     if (sub) {
-      const totalCargados = window._totalProductosCargados || CATALOGO.reduce((sum, p) => sum + (p.variantes ? p.variantes.length : 1), 0);
       sub.textContent = `Encontrá lo que necesitás con los filtros.`;
     }
  

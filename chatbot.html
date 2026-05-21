@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#07091d">
+  <!-- Favicon --> <!-- FIX 6: favicon agregado -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon.ico">
+  <meta name="msapplication-TileColor" content="#07091d">
   <title>Logo – Freecolors</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,15 +26,15 @@
     <li><a href="contacto.html">Contacto</a></li>
   </ul>
   <div class="nav-acciones">
-    <button class="btn-menu-mobile" onclick="toggleMenu()">☰</button>
+    <button class="btn-menu-mobile" onclick="toggleMenu()" aria-label="Abrir menú">☰</button>  <!-- FIX 10: aria-label agregado -->
   </div>
 </nav>
 
 <div class="menu-mobile" id="menuMobile">
-  <a href="index.html">🏠 Inicio</a>
-  <a href="catalogo.html">📖 Catálogo</a>
-  <a href="chatbot.html">💬 Logo</a>
-  <a href="contacto.html">📞 Contacto</a>
+  <a href="index.html"    onclick="cerrarMenu()">🏠 Inicio</a>     <!-- FIX 3: cerrarMenu() agregado -->
+  <a href="catalogo.html" onclick="cerrarMenu()">📖 Catálogo</a>  <!-- FIX 3: cerrarMenu() agregado -->
+  <a href="chatbot.html"  onclick="cerrarMenu()">💬 Logo</a>       <!-- FIX 3: cerrarMenu() agregado -->
+  <a href="contacto.html" onclick="cerrarMenu()">📞 Contacto</a>  <!-- FIX 3: cerrarMenu() agregado -->
 </div>
 
 <div class="wrapper">

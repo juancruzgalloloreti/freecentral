@@ -95,7 +95,10 @@ export async function cargarDesdeSheets() {
       log(`  [${i}] ${p.nombre} → base:"${p.grupoBase}" var:"${p.variante}" $${p.precio}`)
     );
 
-    CATALOGO = agruparProductos(rawProductos);
+    const { catalogo, precioMin, precioMax } = agruparProductos(rawProductos); // FIX: destructuring del nuevo retorno
+    CATALOGO = catalogo;
+    actualizarPrecioMin(precioMin);
+    actualizarPrecioMax(precioMax);
     log(`Catálogo procesado: ${CATALOGO.length} grupos/productos.`);
 
     return true;

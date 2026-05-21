@@ -346,14 +346,12 @@ export function agruparProductos(rawProductos) {
     });
   });
 
-  // Actualizar rangos de precio globales
-  const sheetsModule = import('./sheets.js');
-  estado.precioMin = minGlobal !== Infinity  ? Math.floor(minGlobal / 100) * 100 : 0;
-  estado.precioMax = maxGlobal !== -Infinity ? Math.ceil (maxGlobal / 100) * 100 : 1000000;
-  sheetsModule.then(m => {
-    m.actualizarPrecioMin(estado.precioMin);
-    m.actualizarPrecioMax(estado.precioMax);
-  });
+  // FIX 7: precios calculados síncronamente, sin import() dinámico con race condition
+  const pMin = minGlobal !== Infinity  ? Math.floor(minGlobal / 100) * 100 : 0;
+  const pMax = maxGlobal !== -Infinity ? Math.ceil (maxGlobal / 100) * 100 : 1000000;
+  estado.precioMin = pMin;
+  estado.precioMax = pMax;
+  // Retorna el catálogo y los precios para que el caller (sheets.js) los aplique de forma síncrona
 
   // Ordenar: stock primero, luego intercalar por marca (variedad visual)
   catalogoFinal.sort((a, b) => (b.stock ? 1 : 0) - (a.stock ? 1 : 0));
@@ -375,5 +373,5 @@ export function agruparProductos(rawProductos) {
     }
     ronda++;
   }
-  return resultado;
+  return { catalogo: resultado, precioMin: pMin, precioMax: pMax };
 }

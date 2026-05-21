@@ -51,7 +51,6 @@ export function htmlTarjetaProducto(producto, indice) {
   const badgeHtml    = producto.badge ? `<span class="producto-badge">${producto.badge}</span>` : '';
   const sinStockHtml = !varConStock ? `<span class="producto-badge sin-stock">Sin stock</span>` : '';
   const nombreHtml   = resaltarCoincidencia(producto.nombre, estado.busqueda);
-  const varLabel = '';
 
   const filtrosActivos = estado.busqueda.trim() !== '' || estado.soloConStock || estado.precioMin > _precioMin || estado.precioMax < _precioMax;
   const tieneSeleccion = _varianteSel.has(producto.id) || filtrosActivos;
@@ -87,7 +86,6 @@ export function htmlTarjetaProducto(producto, indice) {
       <div class="producto-info">
         ${badgeHtml}${sinStockHtml}
         <h3 class="producto-nombre" title="${producto.nombre}">${nombreHtml}</h3>
-        ${varLabel}
         ${swatchesHtml}
         ${tagsHtml ? `<div class="producto-tags">${tagsHtml}</div>` : ''}
         <div class="producto-footer">

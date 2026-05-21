@@ -24,6 +24,36 @@
   --espacio-abajo:  env(safe-area-inset-bottom, 0px);
   --espacio-arriba: env(safe-area-inset-top,    0px);
   --transicion: 0.2s ease;
+
+  /* ═══════════════════════════════════════════════════════
+     ALIASES — compatibilidad con catalogo.css
+     Estos nombres son los que usa catalogo.css internamente.
+     Permiten migrar sin romper nada. No usar en código nuevo.
+     ═══════════════════════════════════════════════════════ */
+  --color-oscuro:    var(--azul-oscuro);
+  --color-medio:     var(--azul-medio);
+  --color-primario:  var(--azul-fuerte);
+  --color-violeta:   var(--violeta);
+  --color-degradado: var(--degradado);
+  --color-claro:     var(--azul-claro);
+  --color-suave:     var(--azul-suave);
+  --color-fondo:     var(--blanco);
+  --color-gris:      var(--gris);
+  --color-amarillo:  var(--amarillo);
+  --color-rojo:      var(--rojo-error);
+  --color-verde:     var(--verde-wa);
+  --safe-bottom:     var(--espacio-abajo);
+  --safe-top:        var(--espacio-arriba);
+
+  /* ═══════════════════════════════════════════════════════
+     TOKENS SEMÁNTICOS — estados de UI y fondos
+     ═══════════════════════════════════════════════════════ */
+  --blanco-puro:        #fff;       /* blanco real (--blanco global es #f0f4ff) */
+  --color-fondo-sutil:  #f8fafc;   /* inputs, selects, hover de menú */
+  --color-fondo-activo: #f1f5f9;   /* contadores, tags inactivos */
+  --rojo-critico:       #dc2626;   /* error de texto (distinto a --rojo-error: #e53e3e) */
+  --color-exito:        #22c55e;   /* confirmación de acción (ej: "Agregado" al carrito) */
+  --color-gris-oscuro:  #94a3b8;   /* badges deshabilitados, "Sin stock" */
 }
 
 

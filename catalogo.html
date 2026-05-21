@@ -4,11 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#07091d">
+  <!-- Favicon --> <!-- FIX 6: favicon agregado -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon.ico">
+  <meta name="msapplication-TileColor" content="#07091d">
   <title>Catálogo – Freecolors</title>
   <meta name="description" content="Catálogo completo de pinturas Freecolors. Filtrá por marca, color y precio. Pedí por WhatsApp.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- FIX: global.css agregado como fuente única de tokens de marca -->
+  <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/catalogo.css">
   <style>
     /* Carrito: solo FAB en mobile, solo nav en desktop */
@@ -42,15 +48,15 @@
       <button class="btn-carrito-nav" onclick="toggleCarrito()" style="display:none" id="btnCarritoNav">
         🛒 <span class="badge-carrito" id="badgeCarritoNav">0</span>
       </button>
-      <button class="btn-menu-mobile" onclick="toggleMenuMobile()" aria-label="Abrir menú">☰</button>
+      <button class="btn-menu-mobile" onclick="toggleMenu()" aria-label="Abrir menú">☰</button>
     </div>
   </nav>
 
   <div class="menu-mobile" id="menuMobile">
-    <a href="index.html" onclick="cerrarMenuMobile()">🏠 Inicio</a>
-    <a href="catalogo.html" onclick="cerrarMenuMobile()">📖 Catálogo</a>
-    <a href="chatbot.html" onclick="cerrarMenuMobile()">💬 Logo</a>
-    <a href="contacto.html" onclick="cerrarMenuMobile()">📞 Contacto</a>
+    <a href="index.html"    onclick="cerrarMenu()">🏠 Inicio</a>    <!-- FIX 2: unificado con menu.js -->
+    <a href="catalogo.html" onclick="cerrarMenu()">📖 Catálogo</a>
+    <a href="chatbot.html"  onclick="cerrarMenu()">💬 Logo</a>
+    <a href="contacto.html" onclick="cerrarMenu()">📞 Contacto</a>
   </div>
 
   <!-- ══ HEADER ═══════════════════════════════════ -->
@@ -291,6 +297,7 @@
 
 
 
+<script src="js/menu.js"></script>                   <!-- FIX 2: menu.js incluido para unificar toggleMenu/cerrarMenu -->
 <script type="module" src="js/app.js"></script>
 </body>
 </html>

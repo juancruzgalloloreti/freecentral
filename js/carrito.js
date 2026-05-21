@@ -84,6 +84,10 @@ export function normalizarCarritoConCatalogo() {
     const color = variante.hex || item.color || CAT_COLOR[producto.categoria] || 'var(--color-primario)';
     if (item.color !== color) { item.color = color; cambio = true; }
 
+    // FIX: imagen de producto en carrito
+    const imgUrl = variante.imagenes_url || producto.imagen || 'NO_IMAGEN';
+    if (item.imagenes_url !== imgUrl) { item.imagenes_url = imgUrl; cambio = true; }
+
     if (item.nombre !== producto.nombre) { item.nombre = producto.nombre; cambio = true; }
 
     if (stockFinal <= 0) { cambio = true; return false; }
@@ -127,7 +131,15 @@ export function actualizarUICarrito() {
     const reachedLimit = stockMax > 0 && item.cantidad >= stockMax;
     return `
       <div class="item-carrito">
-        <div class="item-color" style="background:${item.color}"></div>
+        <!-- FIX: imagen de producto en carrito -->
+        <div class="carrito-item-thumb">
+          <img
+            src="${item.imagenes_url || 'NO_IMAGEN'}"
+            alt="${item.nombre}"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"
+          >
+          <div class="carrito-item-color" style="background:${item.color}"></div>
+        </div>
         <div class="item-info">
           <h4>${item.nombre}</h4>
           <p class="item-variante">${(item.variante && item.variante !== 'Único') ? item.variante : ''}</p>
@@ -193,7 +205,9 @@ export function agregarAlCarrito(productoId, mostrarToast) {
       mostrarToast('⚠️ Producto sin stock');
       return;
     }
-    carrito.push({ id: productoId, nombre: producto.nombre, variante: vLabel, precio, color, cantidad: 1, varianteIdx: selIdx, stockMax });
+    // FIX: imagen de producto en carrito
+    const imgUrl = variante.imagenes_url || producto.imagen || 'NO_IMAGEN';
+    carrito.push({ id: productoId, nombre: producto.nombre, variante: vLabel, precio, color, cantidad: 1, varianteIdx: selIdx, stockMax, imagenes_url: imgUrl });
   }
 
   guardarCarrito();

@@ -769,6 +769,26 @@ footer { background: var(--color-oscuro); padding: 1.5rem 5%; margin-top: 2rem; 
   opacity: 0.25;
 }
 
+/* FIX: imagen de producto en carrito */
+.carrito-item-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.carrito-item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.carrito-item-color {
+  width: 100%;
+  height: 100%;
+  display: none; /* solo visible si la imagen falla */
+}
+
 @keyframes skeleton-shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }

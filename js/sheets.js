@@ -25,11 +25,10 @@ async function fetchTodosLosProductos() {
 
   while (true) {
     const url =
-      `${SUPABASE_URL}/rest/v1/productos` +
-      // ✅ FIX: incluir grupo_base, variante y precio_lista_1
-      `?select=id,codigo,nombre,marca,precio_lista_1,precio_lista_2,stock,imagenes_url,grupo_base,variante` +
-      `&activo=eq.true` +
-      `&order=nombre.asc` +
+      `${SUPABASE_URL}/rest/v1/products` +
+      `?select=id,code,name,basePrice,imageUrl,stock,brands(name),categories(name)` +
+      `&isActive=eq.true` +
+      `&order=name.asc` +
       `&limit=${PAGE}&offset=${desde}`;
 
     const resp = await fetch(url, {
@@ -70,21 +69,20 @@ export async function cargarDesdeSheets() {
 
     // ✅ FIX: mapear grupoBase y variante desde la DB
     const rawProductos = filas
-      .filter(f => f.nombre && f.nombre.trim().length > 2)
+      .filter(f => f.name && f.name.trim().length > 2)
       .map(f => ({
-        id:           f.id          || null,
-        nombre:       f.nombre.trim().toUpperCase(),
-        codigo:       f.codigo      || '',
-        marcaSheet:   f.marca       || '',
-        precio:       Number(f.precio_lista_2) || 0,   // precio web transferencia (lo que ve el cliente)
-        precio2:      Number(f.precio_lista_1) || 0,   // precio de lista referencia (inflado)
-        stock:        Number(f.stock)          || 0,
-        imagenes_url: (f.imagenes_url && f.imagenes_url !== 'NO_IMAGEN')
-                        ? f.imagenes_url
+        id:           f.id               || null,
+        nombre:       f.name.trim().toUpperCase(),
+        codigo:       f.code             || '',
+        marcaSheet:   f.brands?.name      || '',
+        precio:       Math.round(Number(f.basePrice) * 0.60 * 100) / 100 || 0,
+        precio2:      Number(f.basePrice) || 0,
+        stock:        Number(f.stock)     || 0,
+        imagenes_url: (f.imageUrl && f.imageUrl !== 'NO_IMAGEN')
+                        ? f.imageUrl
                         : null,
-        // ✅ Estos dos campos son los que habilitan la agrupación por variante
-        grupoBase:    f.grupo_base  || f.nombre.trim().toUpperCase() || '',
-        variante:     f.variante    || '',
+        grupoBase:    f.categories?.name || f.name.trim().toUpperCase() || '',
+        variante:     '',
       }));
 
     log(`${rawProductos.length} productos válidos para procesar.`);

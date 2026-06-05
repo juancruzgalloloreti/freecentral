@@ -13,8 +13,8 @@ export const WHATSAPP = '5491131332405';
 export const CLAVE_CARRITO = 'fc_carrito';
 
 // Supabase — ⚠️ Rotá esta key si fue expuesta en un repo
-export const SUPABASE_URL  = 'https://jxvecsbaphoqkhsekord.supabase.co';
-export const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4dmVjc2JhcGhvcWtoc2Vrb3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODU2MzMsImV4cCI6MjA5MTI2MTYzM30.nmDAwE3Kk9NTpnI8hK1qWZmqQJbcnrGTY4RDrtidCWI';
+export const SUPABASE_URL  = 'https://lqtosckcprprnsnagksv.supabase.co';
+export const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxxdG9zY2tjcHJwcm5zbmFna3N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2Nzc3NDYsImV4cCI6MjA5NDI1Mzc0Nn0.hQyGeeOduDR3zG_OURz2QZfTjXGFnPuALjIdWuG-J5w';
 
 // Paginación: productos por "página" antes del botón "Ver más"
 export const PRODUCTOS_POR_PAGINA = 24;
